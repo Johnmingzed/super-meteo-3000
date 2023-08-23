@@ -1,0 +1,52 @@
+.foreground {
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.weather_data{
+    rotate:-45deg;
+}
+
+.forecast {
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: start;
+    margin-left: 2.5rem;
+    margin-bottom: -1rem;
+}
+
+.city {
+    font-size: 4rem;
+    font-weight: 900;
+}
+
+.temperatures {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.maxmin_temp {
+    font-size: 1.2rem;
+    text-align: start;
+}
+
+.max_temp {
+    font-weight: 600;
+    margin-bottom: -.25rem;
+}
+
+.actual_temp {
+    font-size: 6rem;
+    font-weight: 900;
+    margin-top: -1.55rem;
+}

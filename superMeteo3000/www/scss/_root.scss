@@ -1,0 +1,22 @@
+:root {
+    --color-dark: #123;
+    --color-clearsky: #57B2F3;
+    --color-white: #cde;
+    font-family: 'Inter', system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
+    font-size: 4.5vw;
+    color: var(--color-dark);
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--color-white);
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) {
+    :root {
+        font-size: 4.5vh;
+    }
+}

@@ -1,0 +1,39 @@
+.background {
+    position: relative;
+    background-color: #558E41;
+    overflow: hidden;
+}
+
+.sky {
+    display: inline-block;
+    border-top: 100dvh solid var(--color-clearsky);
+    border-right: 100dvh solid transparent;
+}
+
+.sun {
+    position: absolute;
+    aspect-ratio: 1;
+    height: 90vw;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 100%;
+    background-color: #fd6;
+}
+
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .foreground {
+        flex-direction: row;
+    }
+
+    .sky {
+        border-top-width: 100dvw;
+        border-right-width: 100dvw;
+    }
+
+    .sun {
+        height: 90vh;
+    }
+}
