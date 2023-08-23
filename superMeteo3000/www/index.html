@@ -30,7 +30,7 @@
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        content="default-src 'self' data: https://ssl.gstatic.com https://www.prevision-meteo.ch 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
@@ -40,23 +40,23 @@
 </head>
 
 <body>
-    <div class="app">
+    <div class="app loading">
         <div class="foreground">
-            <h1 class="today">NOW</h1>
+            <h1 class="today blink">MAINTENANT</h1>
             <div class="weather_data">
                 <div style="translate: 0 1.2rem;">
-                    <div class="forecast">SUNNY</div>
-                    <div class="city">BORDEAUX</div>
+                    <div id="forecast">SUNNY</div>
+                    <div id="city">BORDEAUX</div>
                     <div class="temperatures">
                         <div class="maxmin_temp">
-                            <div class="max_temp">max. 35</div>
-                            <div class="min_temp">min. 26</div>
+                            <div id="max_temp">max. 35</div>
+                            <div id="min_temp">min. 26</div>
                         </div>
-                        <div class="actual_temp">32°</div>
+                        <div id="actual_temp">32°</div>
                     </div>
                 </div>
             </div>
-            <h1 class="next_day">TOMORROW</h1>
+            <h1 class="next_day">DEMAIN</h1>
         </div>
         <div class="background">
             <div class="sky"></div>
