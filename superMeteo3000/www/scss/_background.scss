@@ -1,6 +1,6 @@
 .background {
     position: relative;
-    background-color: #558E41;
+    background-color: var(--color-grass);
     overflow: hidden;
 }
 
@@ -18,7 +18,7 @@
     left: 50%;
     translate: -50% -50%;
     border-radius: 100%;
-    background-color: #fd6;
+    background-color: var(--color-sun);
 }
 
 

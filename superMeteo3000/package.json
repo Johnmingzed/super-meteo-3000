@@ -5,6 +5,7 @@
   "description": "Une petite application météo pour smartphone Android.",
   "main": "index.js",
   "scripts": {
+    "sass": "sass -w www/scss:www/css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

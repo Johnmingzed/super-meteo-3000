@@ -22,24 +22,52 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 // Définition de la ville
-const ville = "Bordeaux";
+let cityName = "VILLE INCONNUE";
 
-// Adresse du fournisseur de météo
-const url = 'https://www.prevision-meteo.ch/services/json/';
+// Stockage de la météo
+let meteo;
+
+// Adresse du fournisseur de météo 
+// exemple : https://www.prevision-meteo.ch/services/json/lat=45.32lng=8.54
+const urlMeteo = 'https://www.prevision-meteo.ch/services/json/';
+
+// Adresse du résolveur d'adresse
+// exepmple : https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357
+const urlCity = 'https://api-adresse.data.gouv.fr/reverse/';
+
+// Variables globales
+let Latitude;
+let Longitude;
+let dayToDisplay = 0;
 
 // Sélection des objets
 const appElt = document.getElementsByClassName('app')[0];
 const forecastElt = document.getElementById('forecast');
 const cityElt = document.getElementById('city');
+const maxminTempElt = document.getElementsByClassName('maxmin_temp')[0];
 const maxTempElt = document.getElementById('max_temp');
 const minTempElt = document.getElementById('min_temp');
 const actualTempElt = document.getElementById('actual_temp');
 const nowElt = document.getElementsByClassName('today')[0];
-nowElt.addEventListener('click', refreshMeteo);
+const nextElt = document.getElementsByClassName('next_day')[0];
+const sun = document.getElementsByClassName('sun')[0];
 
-// Interrogation de l'API
-function fetchMeteo(request) {
-    fetch(request)
+// Création de l'objet date
+const dateElt = document.createElement('h2');
+
+// Ajout des écouteurs
+nowElt.addEventListener('click', refreshMeteo);
+nextElt.addEventListener('click', nextForecast);
+
+// Réinitialisation du layout
+function resetLayout() {
+    dateElt.remove();
+    maxminTempElt.classList.remove('only');
+}
+
+// Interrogation de l'API meteo
+async function fetchMeteo(request) {
+    await fetch(request)
         .then(function (reponse) {
             if (reponse.ok) {
                 return reponse.json();
@@ -49,13 +77,10 @@ function fetchMeteo(request) {
         })
         .then(function (data) {
             if (data.errors) {
-                let message = document.createElement('p');
-                message.innerText = data.errors[0].text;
-                message.style.color = 'white';
-                message.style.backgroundColor = 'red';
-                errorDivElt.appendChild(message);
+                console.error(data.error);
+                alert(data.error);
             } else {
-                let meteo = data;
+                meteo = data;
                 console.log(meteo);
                 displayMeteo(meteo);
             };
@@ -64,42 +89,184 @@ function fetchMeteo(request) {
             console.error(error);
             alert(error);
         })
+    console.log('Météo prête');
+}
+
+// Interrogation de l'API ville
+async function fetchCity(Longitude, Latitude) {
+    try {
+        let coordinates = '?lon=' + Longitude.toFixed(2) + '&lat=' + Latitude.toFixed(2);
+        let reponse = await fetch(urlCity + coordinates);
+        let fetchedCity = await reponse.json();
+        cityName = extractCity(fetchedCity);
+        return cityName;
+    } catch (error) {
+        console.error(error);
+        alert(error);
+    }
+}
+
+// Extraction de la ville
+function extractCity(JSON) {
+    if (JSON.features.length > 0) {
+        return JSON.features[0].properties.city;
+    } else {
+        return 'VILLE INCONNUE';
+    }
+}
+
+// Préparation de la date pour affichage
+function formatDate(date) {
+    if (date.length == 10) {
+        let day = date.slice(0, 2);
+        let mounth = date.slice(3, 5);
+        let year = date.slice(6, 10);
+        const fullDate = new Date(year, mounth, day);
+        const options = { month: 'long', day: 'numeric' };
+        return fullDate.toLocaleDateString('fr-FR', options);
+    } else {
+        console.log('Données invalides');
+    }
 }
 
 // Affiche les résultats
 function displayMeteo(meteo) {
-    // Réinitialisation de l'affichage
-    forecastElt.innerText = meteo.current_condition.condition.replace("Développement", "").toUpperCase();
-    cityElt.innerText = meteo.city_info.name.toUpperCase();
-    maxTempElt.innerText = "max." + meteo.fcst_day_0.tmax;
-    minTempElt.innerText = "min." + meteo.fcst_day_0.tmin;
-    actualTempElt.innerText = meteo.current_condition.tmp + "°";
+    sun.classList.remove('rotate');
+    if (dayToDisplay == 0) {
+        forecastElt.innerText = meteo.current_condition.condition.replace("Développement", "").toUpperCase();
+        cityElt.innerText = cityName.toUpperCase();
+        maxTempElt.innerText = "max." + meteo.fcst_day_0.tmax;
+        minTempElt.innerText = "min." + meteo.fcst_day_0.tmin;
+        actualTempElt.innerText = meteo.current_condition.tmp + "°";
+        nowElt.innerText = 'MAINTENANT';
+        nowElt.classList.remove('blink');
+        nextElt.innerText = 'DEMAIN';
+    } else if (dayToDisplay > 0) {
+        forecastElt.innerText = meteo[`fcst_day_${dayToDisplay}`].condition.replace("Développement", "").toUpperCase();
+        cityElt.innerText = cityName.toUpperCase();
+        maxTempElt.innerText = "max." + meteo[`fcst_day_${dayToDisplay}`].tmax + "°";
+        minTempElt.innerText = "min." + meteo[`fcst_day_${dayToDisplay}`].tmin + "°";
+        maxminTempElt.classList.add('only');
+        actualTempElt.innerText = "";
+        nowElt.innerText = meteo[`fcst_day_${dayToDisplay}`].day_long.toUpperCase();
+        // Ajout de la date
+        dateElt.textContent = formatDate(meteo[`fcst_day_${dayToDisplay}`].date).toUpperCase();
+        nowElt.after(dateElt);
+        nextElt.innerText = 'LE DEMAIN';
+    }
+    dayToDisplay += 1;
+    console.log(dayToDisplay);
 }
 
 // Rechargement des résultats
-function refreshMeteo() {
+async function refreshMeteo() {
     console.log('Refresh');
-    fadeOut();
-    setInterval(()=>{location.reload()}, 700);
+    dayToDisplay = 0;
+    dateElt.innerText = "";
+    nowElt.classList.add('blink');
+    nowElt.innerText = "RECHERCHE SIGNAL GPS";
+    sun.classList.add('rotate');
+    forecastElt.innerHTML = "&nbsp;";
+    cityElt.innerHTML = "&nbsp;";
+    maxTempElt.innerHTML = "&nbsp;";
+    minTempElt.innerHTML = "&nbsp;";
+    actualTempElt.innerHTML = "&nbsp;";
+    navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
 }
 
-// Effacement de l'affichage
-function fadeOut() {
-    appElt.classList.remove("loading");
-    let opacity = 1;
-    setInterval(()=>{
-        console.log(opacity);
-        if (opacity > 0) {
-            opacity -= 0.05;
-            appElt.style.opacity = opacity;
+// Affichage du jour suivant
+async function nextForecast() {
+    console.log('Next Day');
+    await transition('fadeout');
+    displayMeteo(meteo);
+    await transition('fadein');
+}
+
+// Fade de l'affichage
+async function transition(param) {
+    return new Promise(resolve => {
+        if (param == 'fadeout') {
+            console.log("Fadeout start")
+            appElt.classList.remove("loading");
+            let opacity = 1;
+            sun.style.scale = 1;
+            const interval = setInterval(() => {
+                if (opacity > 0) {
+                    opacity -= 0.05;
+                    appElt.style.opacity = opacity;
+                    sun.style.scale -= 0.05;
+                } else {
+                    clearInterval(interval);
+                    // Résolution de la promesse à la fin de la transition
+                    sun.style.scale = 0;
+                    appElt.style.opacity = 0;
+                    console.log("Fadeout end")
+                    resolve();
+                }
+            }, 20);
         }
-
-    }, 20);
+        if (param == 'fadein') {
+            console.log("Fadein start")
+            appElt.classList.add("loading");
+            let opacity = 0;
+            sun.style.scale = 0;
+            const interval = setInterval(() => {
+                if (opacity < 1) {
+                    opacity += 0.05;
+                    appElt.style.opacity = opacity;
+                    sun.style.scale = parseFloat(sun.style.scale) + 0.05;
+                } else {
+                    clearInterval(interval);
+                    // Résolution de la promesse à la fin de la transition
+                    sun.style.scale = 1;
+                    appElt.style.opacity = 1;
+                    console.log("Fadein end")
+                    resolve();
+                }
+            }, 20);
+        }
+    })
 }
 
+// Récupération des coordonnées GPS
+function getCoordinates(position) {
+    Latitude = position.coords.latitude;
+    Longitude = position.coords.longitude;
+}
+
+// onSuccess Callback
+// This method accepts a Position object, which contains the
+// current GPS coordinates
+//
+var geolocationSuccess = async function (position) {
+    console.log(position);
+    // Interrogation de l'API météo et affiche le résultat
+    getCoordinates(position);
+    cityName = await fetchCity(Longitude, Latitude);
+    console.log(Latitude, Longitude, cityName);
+    // Transition fadeout
+    await transition('fadeout');
+    resetLayout();
+    // Récupération de la météo
+    await fetchMeteo(urlMeteo + 'lat=' + Latitude.toFixed(2) + 'lng=' + Longitude.toFixed(2));
+    // Transition fadein
+    await transition('fadein');
+};
+
+// onError Callback receives a PositionError object
+//
+function geolocationError(error) {
+    alert('code: ' + error.code + '\n' +
+        'message: ' + error.message + '\n');
+}
+
+// Point d'entrée du programme
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+    /* console.log('Running cordova-' + cordova.platformId + '@' + cordova.version); */
+    // Recherhe du signal GPS (asyncrhone)
+    navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
 }
 
-fetchMeteo(url + ville);
+// Lancement forcé du programme
+onDeviceReady();

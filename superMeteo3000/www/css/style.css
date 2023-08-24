@@ -5,17 +5,26 @@
 :root {
   --color-dark: #123;
   --color-clearsky: #57B2F3;
+  --color-hotsky: #66C1DD;
   --color-white: #cde;
+  --color-sun: #fd6;
+  --color-grass: #558E41;
+  --color-sand:#C1B27E;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
 }
 
-h1 {
+h1, h2 {
   font-size: 2.5rem;
   font-weight: 500;
   text-align: center;
   color: var(--color-white);
+}
+
+h2 {
+  font-size: 1.87rem;
+  margin-bottom: -2.2rem;
 }
 
 /* Landscape layout (with min-width) */
@@ -57,7 +66,7 @@ body {
 
 .background {
   position: relative;
-  background-color: #558E41;
+  background-color: var(--color-grass);
   overflow: hidden;
 }
 
@@ -75,7 +84,7 @@ body {
   left: 50%;
   translate: -50% -50%;
   border-radius: 100%;
-  background-color: #fd6;
+  background-color: var(--color-sun);
 }
 
 /* Landscape layout (with min-width) */
@@ -133,9 +142,14 @@ body {
   text-align: start;
 }
 
+.only {
+  font-size: 3rem;
+  margin: -1.5rem 0 0.8rem 0;
+}
+
 #max_temp {
   font-weight: 600;
-  margin-bottom: -0.25rem;
+  margin-bottom: -0.25em;
 }
 
 #actual_temp {
@@ -163,13 +177,26 @@ body {
     opacity: 1;
   }
 }
+@keyframes rotation {
+  from {
+    rotate: 0;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
 .blink {
-  animation: fade 3000ms infinite;
-  -webkit-animation: fade 3000ms infinite;
+  animation: fade 2000ms infinite;
+  -webkit-animation: fade 2000ms infinite;
 }
 
 .loading {
   animation: fadeIn 1000ms;
+}
+
+.rotate {
+  background: conic-gradient(var(--color-sun), #fff);
+  animation: rotation 1000ms infinite linear;
 }
 
 /*# sourceMappingURL=style.css.map */
