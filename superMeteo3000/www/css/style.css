@@ -70,7 +70,7 @@ body {
   overflow: hidden;
 }
 
-.sky {
+#sky {
   display: inline-block;
   border-top: 100dvh solid var(--color-clearsky);
   border-right: 100dvh solid transparent;
@@ -85,6 +85,10 @@ body {
   translate: -50% -50%;
   border-radius: 100%;
   background-color: var(--color-sun);
+}
+
+.radiate {
+  box-shadow: 0 0 0 7vw rgba(255, 221, 102, 0.3), 0 0 0 14vw rgba(255, 221, 102, 0.3), 0 0 0 21vw rgba(255, 221, 102, 0.3);
 }
 
 /* Landscape layout (with min-width) */

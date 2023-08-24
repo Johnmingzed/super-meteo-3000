@@ -118,10 +118,10 @@ function extractCity(JSON) {
 // Préparation de la date pour affichage
 function formatDate(date) {
     if (date.length == 10) {
-        let day = date.slice(0, 2);
-        let mounth = date.slice(3, 5);
-        let year = date.slice(6, 10);
-        const fullDate = new Date(year, mounth, day);
+        let day = parseInt(date.slice(0, 2));
+        let month = parseInt(date.slice(3, 5));
+        let year = parseInt(date.slice(6, 10));
+        const fullDate = new Date(year, month - 1, day); // Mois est basé sur 0-index, donc mois - 1
         const options = { month: 'long', day: 'numeric' };
         return fullDate.toLocaleDateString('fr-FR', options);
     } else {
@@ -129,10 +129,22 @@ function formatDate(date) {
     }
 }
 
+// Compte le nombre de jours de prévisions
+function forecastNumber(meteo) {
+    let count = 0;
+    for (let i = 1; meteo[`fcst_day_${i}`] !== undefined; i++) {
+        count++;
+    }
+    return count;
+}
+
 // Affiche les résultats
 function displayMeteo(meteo) {
     sun.classList.remove('rotate');
+    let reference = 0;
+    const limit = forecastNumber(meteo);
     if (dayToDisplay == 0) {
+        resetLayout();
         forecastElt.innerText = meteo.current_condition.condition.replace("Développement", "").toUpperCase();
         cityElt.innerText = cityName.toUpperCase();
         maxTempElt.innerText = "max." + meteo.fcst_day_0.tmax;
@@ -141,6 +153,8 @@ function displayMeteo(meteo) {
         nowElt.innerText = 'MAINTENANT';
         nowElt.classList.remove('blink');
         nextElt.innerText = 'DEMAIN';
+        // Référence pour le thême des couleurs
+        reference = meteo.current_condition.tmp;
     } else if (dayToDisplay > 0) {
         forecastElt.innerText = meteo[`fcst_day_${dayToDisplay}`].condition.replace("Développement", "").toUpperCase();
         cityElt.innerText = cityName.toUpperCase();
@@ -152,10 +166,32 @@ function displayMeteo(meteo) {
         // Ajout de la date
         dateElt.textContent = formatDate(meteo[`fcst_day_${dayToDisplay}`].date).toUpperCase();
         nowElt.after(dateElt);
-        nextElt.innerText = 'LE DEMAIN';
+        nextElt.innerText = 'LE LENDEMAIN';
+        // Référence pour le thême des couleurs
+        reference = meteo[`fcst_day_${dayToDisplay}`].tmax;
     }
     dayToDisplay += 1;
-    console.log(dayToDisplay);
+    if (dayToDisplay > limit) {
+        dayToDisplay = 0;
+        nextElt.innerHTML = 'MAINTENANT';
+        console.log('Fin des prévisions');
+    }
+    setTheme(reference);
+}
+
+// Définition des couleurs en fonction de la température
+function setTheme(reference) {
+    const sky = document.getElementById('sky');
+    const ground = document.getElementsByClassName('background')[0];
+    if (reference > 30) {
+        sky.style.borderTopColor = 'var(--color-hotsky)';
+        ground.style.backgroundColor = 'var(--color-sand)';
+        sun.classList.add('radiate');
+    } else {
+        sky.style.borderTopColor = 'var(--color-clearsky)';
+        ground.style.backgroundColor = 'var(--color-grass)';
+        sun.classList.remove('radiate');
+    }
 }
 
 // Rechargement des résultats
@@ -171,6 +207,7 @@ async function refreshMeteo() {
     maxTempElt.innerHTML = "&nbsp;";
     minTempElt.innerHTML = "&nbsp;";
     actualTempElt.innerHTML = "&nbsp;";
+    nextElt.innerHTML = "&nbsp;";
     navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
 }
 
@@ -186,7 +223,6 @@ async function nextForecast() {
 async function transition(param) {
     return new Promise(resolve => {
         if (param == 'fadeout') {
-            console.log("Fadeout start")
             appElt.classList.remove("loading");
             let opacity = 1;
             sun.style.scale = 1;
@@ -200,13 +236,11 @@ async function transition(param) {
                     // Résolution de la promesse à la fin de la transition
                     sun.style.scale = 0;
                     appElt.style.opacity = 0;
-                    console.log("Fadeout end")
                     resolve();
                 }
             }, 20);
         }
         if (param == 'fadein') {
-            console.log("Fadein start")
             appElt.classList.add("loading");
             let opacity = 0;
             sun.style.scale = 0;
@@ -220,7 +254,6 @@ async function transition(param) {
                     // Résolution de la promesse à la fin de la transition
                     sun.style.scale = 1;
                     appElt.style.opacity = 1;
-                    console.log("Fadein end")
                     resolve();
                 }
             }, 20);
