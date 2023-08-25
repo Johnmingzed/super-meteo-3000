@@ -1,10 +1,15 @@
 .background {
-    position: relative;
+    height: inherit;
+    width: inherit;
     background-color: var(--color-grass);
     overflow: hidden;
 }
 
 #sky {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
     display: inline-block;
     border-top: 100dvh solid var(--color-clearsky);
     border-right: 100dvh solid transparent;

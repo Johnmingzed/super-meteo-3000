@@ -48,29 +48,34 @@ body {
   -webkit-user-select: none;
   /* prevent copy paste, to allow, change 'none' to 'text' */
   height: 100dvh;
+  width: 100dvw;
+  overflow: hidden;
   margin: 0px;
   padding: 0px;
   /* Padding to avoid the "unsafe" areas behind notches in the screen */
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
-  width: 100%;
 }
 
 /* Portrait layout (default) */
 .app {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
   text-align: center;
+  height: inherit;
+  width: inherit;
+  overflow: hidden;
 }
 
 .background {
-  position: relative;
+  height: inherit;
+  width: inherit;
   background-color: var(--color-grass);
   overflow: hidden;
 }
 
 #sky {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
   display: inline-block;
   border-top: 100dvh solid var(--color-clearsky);
   border-right: 100dvh solid transparent;
