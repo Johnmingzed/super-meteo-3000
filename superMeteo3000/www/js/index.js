@@ -182,13 +182,16 @@ function displayMeteo(meteo) {
 // Définition des couleurs en fonction de la température
 function setTheme(reference) {
     const horizon = document.getElementById('horizon');
+    const sky = document.getElementById('sky');
     const ground = document.getElementsByClassName('background')[0];
     if (reference > 30) {
         horizon.style.borderTopColor = 'var(--color-sky)';
+        sky.style.borderTopColor = 'var(--color-sky)';
         ground.style.backgroundColor = 'var(--color-sand)';
         sun.classList.add('radiate');
     } else {
         horizon.style.borderTopColor = 'var(--color-clearsky)';
+        sky.style.borderTopColor = 'var(--color-clearsky)';
         ground.style.backgroundColor = 'var(--color-grass)';
         sun.classList.remove('radiate');
     }
