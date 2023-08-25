@@ -47,13 +47,12 @@ body {
   /* prevent webkit from resizing text to fit */
   -webkit-user-select: none;
   /* prevent copy paste, to allow, change 'none' to 'text' */
-  height: 100dvh;
-  width: 100dvw;
+  height: 100svh;
+  width: 100svw;
   overflow: hidden;
-  margin: 0px;
-  padding: 0px;
   /* Padding to avoid the "unsafe" areas behind notches in the screen */
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  background-color: var(--color-dark);
 }
 
 /* Portrait layout (default) */
@@ -61,24 +60,30 @@ body {
   text-align: center;
   height: inherit;
   width: inherit;
-  overflow: hidden;
+  overflow: inherit;
 }
 
 .background {
   height: inherit;
   width: inherit;
+  overflow: inherit;
   background-color: var(--color-grass);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
 }
 
 #sky {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
+  width: inherit;
+  height: calc((100svh - 100svw) / 2);
+  background-color: var(--color-clearsky);
+}
+
+#horizon {
   display: inline-block;
-  border-top: 100dvh solid var(--color-clearsky);
-  border-right: 100dvh solid transparent;
+  border-top: 100svw solid var(--color-clearsky);
+  border-right: 100svw solid transparent;
   overflow: hidden;
 }
 
@@ -99,12 +104,16 @@ body {
 
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width: 400px) {
-  .foreground {
+  .background {
     flex-direction: row;
   }
-  .sky {
-    border-top-width: 100dvw;
-    border-right-width: 100dvw;
+  #sky {
+    height: inherit;
+    width: calc((100svw - 100svh) / 2);
+  }
+  #horizon {
+    border-top: 100svh solid var(--color-clearsky);
+    border-right: 100svh solid transparent;
   }
   .sun {
     height: 90vh;
@@ -116,8 +125,8 @@ body {
   top: 50%;
   left: 50%;
   translate: -50% -50%;
-  height: 100vh;
-  width: 100vw;
+  height: 100svh;
+  width: 100svw;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -168,6 +177,12 @@ body {
   margin-top: -1.55rem;
 }
 
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width: 400px) {
+  .foreground {
+    flex-direction: row;
+  }
+}
 @keyframes fade {
   from {
     opacity: 1;

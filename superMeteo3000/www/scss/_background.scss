@@ -1,19 +1,24 @@
 .background {
     height: inherit;
     width: inherit;
+    overflow: inherit;
     background-color: var(--color-grass);
     overflow: hidden;
-    // display: none; // Pour tester
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
 }
 
-#sky {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
+#sky{
+    width: inherit;
+    height: calc((100svh - 100svw) / 2 );
+    background-color: var(--color-clearsky);
+}
+
+#horizon {
     display: inline-block;
-    border-top: 100dvh solid var(--color-clearsky);
-    border-right: 100dvh solid transparent;
+    border-top: 100svw solid var(--color-clearsky);
+    border-right: 100svw solid transparent;
     overflow: hidden;
 }
 
@@ -38,13 +43,18 @@
 
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
-    .foreground {
+    .background {
         flex-direction: row;
     }
 
-    .sky {
-        border-top-width: 100dvw;
-        border-right-width: 100dvw;
+    #sky {
+        height: inherit;
+        width: calc((100svw - 100svh) / 2 );
+    }
+
+    #horizon {
+        border-top: 100svh solid var(--color-clearsky);
+        border-right: 100svh solid transparent;
     }
 
     .sun {

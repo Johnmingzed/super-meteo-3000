@@ -4,8 +4,8 @@
     top: 50%;
     left: 50%;
     translate: -50% -50%;
-    height: 100vh;
-    width: 100vw;
+    height: 100svh;
+    width: 100svw;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -54,4 +54,11 @@
     font-size: 6rem;
     font-weight: 900;
     margin-top: -1.55rem;
+}
+
+/* Landscape layout (with min-width) */
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+    .foreground {
+        flex-direction: row;
+    }
 }
