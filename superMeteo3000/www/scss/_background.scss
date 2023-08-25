@@ -13,6 +13,7 @@
     display: inline-block;
     border-top: 100dvh solid var(--color-clearsky);
     border-right: 100dvh solid transparent;
+    overflow: hidden;
 }
 
 .sun {
