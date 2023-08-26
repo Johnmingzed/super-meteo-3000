@@ -55,9 +55,13 @@ const sun = document.getElementsByClassName('sun')[0];
 // Création de l'objet date
 const dateElt = document.createElement('h2');
 
-// Ajout des écouteurs
+// Initialisation des écouteurs de clics
 nowElt.addEventListener('click', refreshMeteo);
 nextElt.addEventListener('click', nextForecast);
+
+// Initilaisation des écouteurs de swipes
+document.addEventListener('swiped-up', refreshMeteo);
+document.addEventListener('swiped-down', nextForecast);
 
 // Réinitialisation du layout
 function resetLayout() {
@@ -145,7 +149,7 @@ function displayMeteo(meteo) {
     const limit = forecastNumber(meteo);
     if (dayToDisplay == 0) {
         resetLayout();
-        forecastElt.innerText = meteo.current_condition.condition.replace("Développement", "").toUpperCase();
+        forecastElt.innerText = meteo.current_condition.condition.toUpperCase();
         cityElt.innerText = cityName.toUpperCase();
         maxTempElt.innerText = "max." + meteo.fcst_day_0.tmax;
         minTempElt.innerText = "min." + meteo.fcst_day_0.tmin;
@@ -184,11 +188,13 @@ function setTheme(reference) {
     const horizon = document.getElementById('horizon');
     const sky = document.getElementById('sky');
     const ground = document.getElementsByClassName('background')[0];
-    if (reference > 30) {
+    // Situation de canicule
+    if (reference > 35) {
         horizon.style.borderTopColor = 'var(--color-sky)';
         sky.style.borderTopColor = 'var(--color-sky)';
         ground.style.backgroundColor = 'var(--color-sand)';
         sun.classList.add('radiate');
+    // Temps clair
     } else {
         horizon.style.borderTopColor = 'var(--color-clearsky)';
         sky.style.borderTopColor = 'var(--color-clearsky)';

@@ -24,5 +24,8 @@
     "plugins": {
       "cordova-plugin-geolocation": {}
     }
+  },
+  "dependencies": {
+    "swiped-events": "^1.1.7"
   }
 }
