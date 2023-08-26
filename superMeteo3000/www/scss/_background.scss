@@ -9,10 +9,11 @@
     justify-content: start;
 }
 
-#sky{
+#sky {
     width: inherit;
-    height: calc((100svh - 100svw) / 2 );
+    height: calc(50svh - 50svw);
     background-color: var(--color-clearsky);
+    transition: height 0ms ease;
 }
 
 #horizon {
@@ -35,9 +36,9 @@
 
 .radiate {
     box-shadow:
-    0 0 0 7vw rgba(255,221,102,0.3),
-    0 0 0 14vw rgba(255,221,102,0.3),
-    0 0 0 21vw rgba(255,221,102,0.3);
+        0 0 0 7vw rgba(255, 221, 102, 0.3),
+        0 0 0 14vw rgba(255, 221, 102, 0.3),
+        0 0 0 21vw rgba(255, 221, 102, 0.3);
 }
 
 
@@ -49,7 +50,7 @@
 
     #sky {
         height: inherit;
-        width: calc((100svw - 100svh) / 2 );
+        width: calc((100svw - 100svh) / 2);
     }
 
     #horizon {

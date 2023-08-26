@@ -40,7 +40,12 @@ let Latitude;
 let Longitude;
 let dayToDisplay = 0;
 
-// Sélection des objets
+// Variables de suivi de la souris
+var yDown = null;
+var yDiff = null;
+var actualSize = null;
+
+// Sélection des éléments textuels
 const appElt = document.getElementsByClassName('app')[0];
 const forecastElt = document.getElementById('forecast');
 const cityElt = document.getElementById('city');
@@ -48,25 +53,66 @@ const maxminTempElt = document.getElementsByClassName('maxmin_temp')[0];
 const maxTempElt = document.getElementById('max_temp');
 const minTempElt = document.getElementById('min_temp');
 const actualTempElt = document.getElementById('actual_temp');
-const nowElt = document.getElementsByClassName('today')[0];
+const dayElt = document.getElementsByClassName('today')[0];
+const infosElt = document.getElementsByClassName('infos')[0];
 const nextElt = document.getElementsByClassName('next_day')[0];
 const sun = document.getElementsByClassName('sun')[0];
+const topTextElt = document.getElementById('top_text');
+const bottomTextElt = document.getElementById('bottom_text');
 
-// Création de l'objet date
+// Sélection des éléments graphiques
+const horizon = document.getElementById('horizon');
+const sky = document.getElementById('sky');
+const ground = document.getElementsByClassName('background')[0];
+
+// Création des éléments à afficher en plus
 const dateElt = document.createElement('h2');
+const nowElt = document.createElement('h3');
 
 // Initialisation des écouteurs de clics
-nowElt.addEventListener('click', refreshMeteo);
-nextElt.addEventListener('click', nextForecast);
+topTextElt.addEventListener('click', refreshMeteo);
+bottomTextElt.addEventListener('click', nextForecast);
 
 // Initilaisation des écouteurs de swipes
-document.addEventListener('swiped-up', refreshMeteo);
-document.addEventListener('swiped-down', nextForecast);
+document.addEventListener('swiped-down', refreshMeteo);
+document.addEventListener('swiped-up', nextForecast);
+document.addEventListener('touchstart', handleTouchStart);
+document.addEventListener('touchend', handleTouchEnd);
+document.addEventListener('touchmove', handleTouchMove);
+
+// Fonctions permettant le déplacement de l'arrière plan
+function handleTouchStart(e) {
+    yDown = e.touches[0].clientY;
+    actualSize = sky.clientHeight;
+    sky.style.transitionDuration = "0ms";
+    console.log("click at :", yDown);
+}
+
+function handleTouchEnd(e) {
+    console.log("Release");
+    sky.style.height = "calc(50svh - 50svw)";
+    sky.style.transitionDuration = "250ms";
+}
+
+function handleTouchMove(e) {
+    let yUp = e.touches[0].clientY;
+    yDiff = yDown - yUp;
+    let newSize = actualSize - yDiff;
+    if (newSize >= actualSize * 2) {
+        newSize = actualSize * 2;
+    } else if (newSize < 0) {
+        newSize = 0;
+    }
+    sky.style.height = (newSize) + "px";
+    console.log(sky.clientHeight, yDiff);
+}
 
 // Réinitialisation du layout
 function resetLayout() {
     dateElt.remove();
+    nowElt.remove();
     maxminTempElt.classList.remove('only');
+    infosElt.innerText = "";
 }
 
 // Interrogation de l'API meteo
@@ -147,54 +193,75 @@ function displayMeteo(meteo) {
     sun.classList.remove('rotate');
     let reference = 0;
     const limit = forecastNumber(meteo);
+    resetLayout();
+
+    // Ajout des nouveaux éléments à afficher
+    dayElt.before(nowElt);
+    dayElt.after(dateElt);
+    nextElt.before(infosElt);
+    infosElt.innerText = "VOIR LES PRÉVISIONS POUR";
+
+    // Météo du jour
     if (dayToDisplay == 0) {
-        resetLayout();
         forecastElt.innerText = meteo.current_condition.condition.toUpperCase();
         cityElt.innerText = cityName.toUpperCase();
         maxTempElt.innerText = "max." + meteo.fcst_day_0.tmax;
         minTempElt.innerText = "min." + meteo.fcst_day_0.tmin;
         actualTempElt.innerText = meteo.current_condition.tmp + "°";
+        // Indication de la mention "maintenant"
         nowElt.innerText = 'MAINTENANT';
-        nowElt.classList.remove('blink');
+        nowElt.classList.add('blink');
+        // Indication du jour de la semaine
+        dayElt.classList.remove('blink');
+        dayElt.innerText = meteo[`fcst_day_${dayToDisplay}`].day_long.toUpperCase();
+        // Indication de la date
+        dateElt.textContent = formatDate(meteo[`fcst_day_${dayToDisplay}`].date).toUpperCase();
+        // Indication concernant les prévision affichables
         nextElt.innerText = 'DEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo.current_condition.tmp;
+
+        // Prévision à J+X
     } else if (dayToDisplay > 0) {
-        forecastElt.innerText = meteo[`fcst_day_${dayToDisplay}`].condition.replace("Développement", "").toUpperCase();
-        cityElt.innerText = cityName.toUpperCase();
+        forecastElt.innerText = cityName.toUpperCase();
+        cityElt.innerText = meteo[`fcst_day_${dayToDisplay}`].condition.toUpperCase();
         maxTempElt.innerText = "max." + meteo[`fcst_day_${dayToDisplay}`].tmax + "°";
         minTempElt.innerText = "min." + meteo[`fcst_day_${dayToDisplay}`].tmin + "°";
         maxminTempElt.classList.add('only');
+        // Effacement des éléments inutils
         actualTempElt.innerText = "";
-        nowElt.innerText = meteo[`fcst_day_${dayToDisplay}`].day_long.toUpperCase();
+        nowElt.innerText = "";
+        // Indication du jour de la semaine
+        dayElt.innerText = meteo[`fcst_day_${dayToDisplay}`].day_long.toUpperCase();
         // Ajout de la date
         dateElt.textContent = formatDate(meteo[`fcst_day_${dayToDisplay}`].date).toUpperCase();
-        nowElt.after(dateElt);
         nextElt.innerText = 'LE LENDEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo[`fcst_day_${dayToDisplay}`].tmax;
     }
+
+    // Préparations de la sélection des prochaines prévisions
     dayToDisplay += 1;
+
+    // Retour à la météo du jour
     if (dayToDisplay > limit) {
         dayToDisplay = 0;
         nextElt.innerHTML = 'MAINTENANT';
         console.log('Fin des prévisions');
     }
+
     setTheme(reference);
 }
 
 // Définition des couleurs en fonction de la température
 function setTheme(reference) {
-    const horizon = document.getElementById('horizon');
-    const sky = document.getElementById('sky');
-    const ground = document.getElementsByClassName('background')[0];
     // Situation de canicule
     if (reference > 35) {
         horizon.style.borderTopColor = 'var(--color-sky)';
         sky.style.borderTopColor = 'var(--color-sky)';
         ground.style.backgroundColor = 'var(--color-sand)';
         sun.classList.add('radiate');
-    // Temps clair
+        // Temps clair
     } else {
         horizon.style.borderTopColor = 'var(--color-clearsky)';
         sky.style.borderTopColor = 'var(--color-clearsky)';
@@ -205,11 +272,12 @@ function setTheme(reference) {
 
 // Rechargement des résultats
 async function refreshMeteo() {
+    resetLayout();
     console.log('Refresh');
     dayToDisplay = 0;
     dateElt.innerText = "";
-    nowElt.classList.add('blink');
-    nowElt.innerText = "RECHERCHE SIGNAL GPS";
+    dayElt.classList.add('blink');
+    dayElt.innerText = "RECHERCHE SIGNAL GPS";
     sun.classList.add('rotate');
     forecastElt.innerHTML = "&nbsp;";
     cityElt.innerHTML = "&nbsp;";
