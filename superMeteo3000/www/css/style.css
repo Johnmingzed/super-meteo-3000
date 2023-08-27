@@ -10,6 +10,7 @@
   --color-sun: #fd6;
   --color-grass: #558E41;
   --color-sand:#C1B27E;
+  --wind-speed:0;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
@@ -72,6 +73,9 @@ body {
 }
 
 .background {
+  z-index: -1;
+  position: absolute;
+  inset: 0;
   height: inherit;
   width: inherit;
   overflow: inherit;
@@ -103,7 +107,7 @@ body {
   top: 50%;
   left: 50%;
   translate: -50% -50%;
-  border-radius: 100%;
+  border-radius: 50%;
   background-color: var(--color-sun);
 }
 
@@ -128,12 +132,53 @@ body {
     height: 90vh;
   }
 }
+#meteoFX {
+  z-index: 0;
+  position: absolute;
+  inset: 0;
+  height: inherit;
+  width: inherit;
+  overflow: inherit;
+}
+
+#clouds {
+  position: absolute;
+  height: inherit;
+  width: inherit;
+  overflow: inherit;
+}
+
+#clouds::after {
+  --height: calc(50svh * 1.42);
+  --width: calc(var(--height) * 2);
+  position: absolute;
+  content: "";
+  height: var(--height);
+  width: var(--width);
+  bottom: 50%;
+  left: calc(50svw - var(--width) / 2);
+  z-index: 1;
+  /* Clouds Settings */
+  --size: 3rem;
+  --AA: 1px;
+  --angle: -45deg;
+  --color-clouds: #def;
+  background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
+  /* Patterns sizes */
+  background-size: calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5);
+  /* Offest patterns positions */
+  background-position: 0 calc(100% + var(--size) * 0.625), calc(var(--size) * 0.625) calc(100% + var(--size) * -0.625), calc(var(--size) * 5) calc(100% + var(--size) * 0.125), calc(var(--size) * 1.875) calc(100% + var(--size) * 1.375);
+  /* Alpha gradient */
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+  transform: rotate(var(--angle));
+  transform-origin: bottom;
+}
+
 .foreground {
   z-index: 1;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
+  inset: 0;
   height: inherit;
   width: inherit;
   overflow: inherit;
@@ -220,6 +265,21 @@ body {
     rotate: 360deg;
   }
 }
+@keyframes wind {
+  from {
+    width: var(--width);
+    left: calc(50svw - var(--width) / 2);
+  }
+  to {
+    width: calc(var(--width) + var(--size) * 10);
+    left: calc(50svw - (var(--width) + var(--size) * 10) / 2);
+  }
+}
+#clouds::after {
+  animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
+  -webkit-animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
+}
+
 .blink {
   animation: fade 2000ms infinite;
   -webkit-animation: fade 2000ms infinite;

@@ -39,6 +39,7 @@ const urlCity = 'https://api-adresse.data.gouv.fr/reverse/';
 let Latitude;
 let Longitude;
 let dayToDisplay = 0;
+let windSpeed = 0;
 
 // Variables de suivi de la souris
 var yDown = null;
@@ -66,6 +67,7 @@ const sky = document.getElementById('sky');
 const ground = document.getElementsByClassName('background')[0];
 
 // Création des éléments à afficher en plus
+const clouds = document.getElementById('clouds');
 const dateElt = document.createElement('h2');
 const nowElt = document.createElement('h3');
 
@@ -85,6 +87,7 @@ function handleTouchStart(e) {
     yDown = e.touches[0].clientY;
     actualSize = sky.clientHeight;
     sky.style.transitionDuration = "0ms";
+    clouds.style.transitionDuration = "0ms";
     console.log("click at :", yDown);
 }
 
@@ -92,18 +95,24 @@ function handleTouchEnd(e) {
     console.log("Release");
     sky.style.height = "calc(50svh - 50svw)";
     sky.style.transitionDuration = "250ms";
+    clouds.style.translate = "0 0";
+    clouds.style.transitionDuration = "250ms";
 }
 
 function handleTouchMove(e) {
     let yUp = e.touches[0].clientY;
     yDiff = yDown - yUp;
+    let translateValue = yDiff;
     let newSize = actualSize - yDiff;
     if (newSize >= actualSize * 2) {
         newSize = actualSize * 2;
+        translateValue = -actualSize;
     } else if (newSize < 0) {
         newSize = 0;
+        translateValue = actualSize;
     }
-    sky.style.height = (newSize) + "px";
+    sky.style.height = newSize + "px";
+    clouds.style.translate = "0 " + (0 - translateValue) + "px";
     console.log(sky.clientHeight, yDiff);
 }
 
@@ -220,6 +229,8 @@ function displayMeteo(meteo) {
         nextElt.innerText = 'DEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo.current_condition.tmp;
+        // Récupération de la vitesse du vent
+        windSpeed = meteo.current_condition.wnd_spd;
 
         // Prévision à J+X
     } else if (dayToDisplay > 0) {
@@ -238,10 +249,15 @@ function displayMeteo(meteo) {
         nextElt.innerText = 'LE LENDEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo[`fcst_day_${dayToDisplay}`].tmax;
+        // Récupération de la vitesse du vent
+        windSpeed = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'].WNDSPD10m;
     }
 
     // Préparations de la sélection des prochaines prévisions
     dayToDisplay += 1;
+
+    // Vitesse du vent
+    document.documentElement.style.setProperty('--wind-speed', windSpeed);
 
     // Retour à la météo du jour
     if (dayToDisplay > limit) {

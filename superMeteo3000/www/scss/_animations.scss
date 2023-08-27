@@ -31,6 +31,22 @@
     }
 }
 
+@keyframes wind {
+    from {
+        width: var(--width);
+        left: calc(50svw - var(--width) / 2);
+    }
+    to {
+        width: calc(var(--width) + var(--size) * 10);
+        left: calc(50svw - (var(--width) + var(--size) * 10) / 2);
+    }
+}
+
+#clouds::after {
+    animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
+    -webkit-animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
+}
+
 .blink {
     animation: fade 2000ms infinite;
     -webkit-animation: fade 2000ms infinite;
