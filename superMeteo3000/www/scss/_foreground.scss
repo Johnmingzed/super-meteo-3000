@@ -17,15 +17,18 @@
 
 #forecast {
     font-size: 2rem;
+    /* font-size: 1.4rem; /* Pour les noms longs > 16 */
     font-weight: 500;
+    line-height: 1em;
     text-align: start;
     margin-left: 2.5rem;
-    margin-bottom: -1rem;
 }
 
 #city {
     font-size: 4rem;
+    /* font-size: 2.5rem; /* Pour les noms longs > 10 */
     font-weight: 900;
+    line-height: .9em;
 }
 
 .temperatures {

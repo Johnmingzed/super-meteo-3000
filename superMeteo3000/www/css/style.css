@@ -9,20 +9,23 @@
   --color-white: #cde;
   --color-sun: #fd6;
   --color-grass: #558E41;
-  --color-sand:#C1B27E;
-  --wind-speed:0;
-  --cloud-coverage:0;
+  --color-sand: #C1B27E;
+  --wind-speed: 0;
+  --cloud-coverage: 0;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-size: 2.5rem;
   font-weight: 500;
   text-align: center;
   color: var(--color-white);
   text-shadow: #123 0.05em 0.05em 0.1em;
+  text-wrap: balance;
 }
 
 h2 {
@@ -198,15 +201,18 @@ body {
 
 #forecast {
   font-size: 2rem;
+  /* font-size: 1.4rem; /* Pour les noms longs > 16 */
   font-weight: 500;
+  line-height: 1em;
   text-align: start;
   margin-left: 2.5rem;
-  margin-bottom: -1rem;
 }
 
 #city {
   font-size: 4rem;
+  /* font-size: 2.5rem; /* Pour les noms longs > 10 */
   font-weight: 900;
+  line-height: 0.9em;
 }
 
 .temperatures {

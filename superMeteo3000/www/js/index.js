@@ -273,6 +273,7 @@ function displayMeteo(meteo) {
         console.log('Fin des prévisions');
     }
 
+    setFontSizes(forecastElt.innerText, cityElt.innerText);
     setClouds(cloudVoverage);
     setTheme(reference);
 }
@@ -295,12 +296,20 @@ function setTheme(reference) {
 }
 
 // Réglage de la couverture nuageuse
-function setClouds(meteo){
+function setClouds(meteo) {
     const highClouds = parseInt(meteo.HCDC);
     const mediumClouds = parseInt(meteo.MCDC);
     const lowClouds = parseInt(meteo.LCDC);
     const coverage = Math.trunc((highClouds + mediumClouds + lowClouds) / 3);
     document.documentElement.style.setProperty('--cloud-coverage', coverage / 100);
+}
+
+// Longueur des noms
+function setFontSizes(forecast, city) {
+    let forecastFontSize = forecast.length > 16 ? 1.4 : 2;
+    let cityFontSize = city.length > 10 ? 2.5 : 4;
+    forecastElt.style.fontSize = forecastFontSize + "rem";
+    cityElt.style.fontSize = cityFontSize + "rem";
 }
 
 // Rechargement des résultats
