@@ -11,6 +11,7 @@
   --color-grass: #558E41;
   --color-sand:#C1B27E;
   --wind-speed:0;
+  --cloud-coverage:0;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
@@ -21,6 +22,7 @@ h1, h2, h3 {
   font-weight: 500;
   text-align: center;
   color: var(--color-white);
+  text-shadow: #123 0.05em 0.05em 0.1em;
 }
 
 h2 {
@@ -146,6 +148,7 @@ body {
   height: inherit;
   width: inherit;
   overflow: inherit;
+  display: none;
 }
 
 #clouds::after {
@@ -158,6 +161,7 @@ body {
   bottom: 50%;
   left: calc(50svw - var(--width) / 2);
   z-index: 1;
+  opacity: var(--cloud-coverage);
   /* Clouds Settings */
   --size: 3rem;
   --AA: 1px;
@@ -169,8 +173,8 @@ body {
   /* Offest patterns positions */
   background-position: 0 calc(100% + var(--size) * 0.625), calc(var(--size) * 0.625) calc(100% + var(--size) * -0.625), calc(var(--size) * 5) calc(100% + var(--size) * 0.125), calc(var(--size) * 1.875) calc(100% + var(--size) * 1.375);
   /* Alpha gradient */
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
   transform: rotate(var(--angle));
   transform-origin: bottom;
 }

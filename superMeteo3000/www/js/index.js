@@ -122,6 +122,7 @@ function resetLayout() {
     nowElt.remove();
     maxminTempElt.classList.remove('only');
     infosElt.innerText = "";
+    clouds.style.setProperty('display', 'none');
 }
 
 // Interrogation de l'API meteo
@@ -201,6 +202,7 @@ function forecastNumber(meteo) {
 function displayMeteo(meteo) {
     sun.classList.remove('rotate');
     let reference = 0;
+    let cloudVoverage = null;
     const limit = forecastNumber(meteo);
     resetLayout();
 
@@ -209,6 +211,7 @@ function displayMeteo(meteo) {
     dayElt.after(dateElt);
     nextElt.before(infosElt);
     infosElt.innerText = "VOIR LES PRÉVISIONS POUR";
+    clouds.style.setProperty('display', 'block');
 
     // Météo du jour
     if (dayToDisplay == 0) {
@@ -229,6 +232,8 @@ function displayMeteo(meteo) {
         nextElt.innerText = 'DEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo.current_condition.tmp;
+        // Référence pour la couverture nuageuse
+        cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
         // Récupération de la vitesse du vent
         windSpeed = meteo.current_condition.wnd_spd;
 
@@ -249,6 +254,8 @@ function displayMeteo(meteo) {
         nextElt.innerText = 'LE LENDEMAIN';
         // Référence pour le thême des couleurs
         reference = meteo[`fcst_day_${dayToDisplay}`].tmax;
+        // Référence pour la couverture nuageuse
+        cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
         // Récupération de la vitesse du vent
         windSpeed = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'].WNDSPD10m;
     }
@@ -266,6 +273,7 @@ function displayMeteo(meteo) {
         console.log('Fin des prévisions');
     }
 
+    setClouds(cloudVoverage);
     setTheme(reference);
 }
 
@@ -273,17 +281,26 @@ function displayMeteo(meteo) {
 function setTheme(reference) {
     // Situation de canicule
     if (reference > 35) {
-        horizon.style.borderTopColor = 'var(--color-sky)';
-        sky.style.borderTopColor = 'var(--color-sky)';
+        horizon.style.borderTopColor = 'var(--color-hotsky)';
+        sky.style.backgroundColor = 'var(--color-hotsky)';
         ground.style.backgroundColor = 'var(--color-sand)';
         sun.classList.add('radiate');
         // Temps clair
     } else {
         horizon.style.borderTopColor = 'var(--color-clearsky)';
-        sky.style.borderTopColor = 'var(--color-clearsky)';
+        sky.style.backgroundColor = 'var(--color-clearsky)';
         ground.style.backgroundColor = 'var(--color-grass)';
         sun.classList.remove('radiate');
     }
+}
+
+// Réglage de la couverture nuageuse
+function setClouds(meteo){
+    const highClouds = parseInt(meteo.HCDC);
+    const mediumClouds = parseInt(meteo.MCDC);
+    const lowClouds = parseInt(meteo.LCDC);
+    const coverage = Math.trunc((highClouds + mediumClouds + lowClouds) / 3);
+    document.documentElement.style.setProperty('--cloud-coverage', coverage / 100);
 }
 
 // Rechargement des résultats

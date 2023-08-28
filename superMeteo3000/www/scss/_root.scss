@@ -7,6 +7,7 @@
     --color-grass: #558E41;
     --color-sand:#C1B27E;
     --wind-speed:0;
+    --cloud-coverage:0;
     font-family: 'Inter', system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 4.5vw;
     color: var(--color-dark);
@@ -17,6 +18,7 @@ h1, h2, h3 {
     font-weight: 500;
     text-align: center;
     color: var(--color-white);
+    text-shadow: #123 .05em .05em .1em ;
 }
 
 h2 {
