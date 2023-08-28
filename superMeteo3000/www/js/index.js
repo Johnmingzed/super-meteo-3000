@@ -113,7 +113,6 @@ function handleTouchMove(e) {
     }
     sky.style.height = newSize + "px";
     clouds.style.translate = "0 " + (0 - translateValue) + "px";
-    console.log(sky.clientHeight, yDiff);
 }
 
 // Réinitialisation du layout
@@ -176,14 +175,18 @@ function extractCity(JSON) {
 }
 
 // Préparation de la date pour affichage
-function formatDate(date) {
+function formatDate(date, option = null) {
     if (date.length == 10) {
         let day = parseInt(date.slice(0, 2));
         let month = parseInt(date.slice(3, 5));
         let year = parseInt(date.slice(6, 10));
         const fullDate = new Date(year, month - 1, day); // Mois est basé sur 0-index, donc mois - 1
         const options = { month: 'long', day: 'numeric' };
-        return fullDate.toLocaleDateString('fr-FR', options);
+        if (option == "numeric"){
+            return fullDate;
+        } else {
+            return fullDate.toLocaleDateString('fr-FR', options);
+        }
     } else {
         console.log('Données invalides');
     }
@@ -236,6 +239,8 @@ function displayMeteo(meteo) {
         cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
         // Récupération de la vitesse du vent
         windSpeed = meteo.current_condition.wnd_spd;
+        // Appel de l'affichage nocturne
+        setNight(meteo.city_info);
 
         // Prévision à J+X
     } else if (dayToDisplay > 0) {
@@ -310,6 +315,14 @@ function setFontSizes(forecast, city) {
     let cityFontSize = city.length > 10 ? 2.5 : 4;
     forecastElt.style.fontSize = forecastFontSize + "rem";
     cityElt.style.fontSize = cityFontSize + "rem";
+}
+
+// Gestion de la nuit
+function setNight(meteo) {
+    let date = formatDate(meteo.current_condition.date, 'numeric');
+    let sunrise = Date(meteo.sunrise);
+    let sunset = Date(meteo.sunset);
+    let now = Date.now().getTime();
 }
 
 // Rechargement des résultats

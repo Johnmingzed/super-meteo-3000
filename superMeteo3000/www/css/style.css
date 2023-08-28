@@ -3,6 +3,7 @@
   src: url("../fonts/Inter-Variable.ttf") format("truetype");
 }
 :root {
+  --color-night:#012;
   --color-dark: #123;
   --color-clearsky: #57B2F3;
   --color-hotsky: #66C1DD;
@@ -91,6 +92,10 @@ body {
   justify-content: start;
 }
 
+.night {
+  background: radial-gradient(circle, rgba(0, 16, 32, 0.5), var(--color-night));
+}
+
 #sky {
   width: inherit;
   height: calc(50svh - 50svw);
@@ -146,7 +151,8 @@ body {
   overflow: inherit;
 }
 
-#clouds {
+#clouds,
+#stars {
   position: absolute;
   height: inherit;
   width: inherit;
@@ -154,7 +160,14 @@ body {
   display: none;
 }
 
-#clouds::after {
+#stars {
+  z-index: 0;
+  display: block;
+}
+
+#clouds::after,
+#stars::after {
+  /* Block settings */
   --height: calc(50svh * 1.42);
   --width: calc(var(--height) * 2);
   position: absolute;
@@ -164,12 +177,18 @@ body {
   bottom: 50%;
   left: calc(50svw - var(--width) / 2);
   z-index: 1;
-  opacity: var(--cloud-coverage);
+  transform: rotate(var(--angle));
+  transform-origin: bottom;
+}
+
+#clouds::after {
   /* Clouds Settings */
   --size: 3rem;
   --AA: 1px;
   --angle: -45deg;
   --color-clouds: #def;
+  opacity: var(--cloud-coverage);
+  /* Texture */
   background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
   /* Patterns sizes */
   background-size: calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5);
@@ -178,8 +197,15 @@ body {
   /* Alpha gradient */
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
-  transform: rotate(var(--angle));
-  transform-origin: bottom;
+}
+
+#stars::after {
+  --angle: -45deg;
+  /* Texture */
+  background-color: var(--color-night);
+  background-image: radial-gradient(white, transparent 2px, transparent 2.7rem), radial-gradient(white, transparent 1px, transparent 2rem), radial-gradient(white, transparent 2px, transparent 1.5rem), radial-gradient(white, transparent 2px, transparent 1rem), radial-gradient(white, rgba(255, 255, 255, 0) 2px, transparent 3rem);
+  background-size: 11rem 11rem, 8.5rem 8.5rem, 10rem 10rem, 6rem 6rem, 11.5rem 11.5rem;
+  background-position: 1rem 2rem, 5rem 10rem, 8rem 3rem, 8rem 9rem, 7rem 9rem;
 }
 
 .foreground {

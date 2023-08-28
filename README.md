@@ -5,6 +5,7 @@ To-Do List :
 - Fractionner le code
 - ✅ Gestion de la longueur des noms à afficher
 - ✅ Opacité des nuages en fonction de la couverture nuageuse
+- ✅ Thème nocturne
 - Thème pluie
 - Thème orageux
 - Correction affichage nuages lors des swipes vers le bas

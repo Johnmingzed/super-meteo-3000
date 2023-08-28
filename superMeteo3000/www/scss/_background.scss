@@ -1,7 +1,7 @@
 .background {
     z-index: -1;
     position: absolute;
-    inset:0;
+    inset: 0;
     height: inherit;
     width: inherit;
     overflow: inherit;
@@ -10,6 +10,10 @@
     display: flex;
     flex-direction: column;
     justify-content: start;
+}
+
+.night {
+    background: radial-gradient(circle, rgba(0,16,32,0.5), var(--color-night));
 }
 
 #sky {
