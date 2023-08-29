@@ -1,3 +1,5 @@
+import { datasForTest } from "./datasForTest.js";
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,9 +19,14 @@
  * under the License.
  */
 
+
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
+
 document.addEventListener('deviceready', onDeviceReady, false);
+
+// Données de debugage
+const DEBUG = false;
 
 // Définition de la ville
 let cityName = "VILLE INCONNUE";
@@ -64,6 +71,7 @@ const bottomTextElt = document.getElementById('bottom_text');
 // Sélection des éléments graphiques
 const horizon = document.getElementById('horizon');
 const sky = document.getElementById('sky');
+const stars = document.getElementById('stars');
 const ground = document.getElementsByClassName('background')[0];
 
 // Création des éléments à afficher en plus
@@ -88,6 +96,7 @@ function handleTouchStart(e) {
     actualSize = sky.clientHeight;
     sky.style.transitionDuration = "0ms";
     clouds.style.transitionDuration = "0ms";
+    stars.style.transitionDuration = "0ms";
     console.log("click at :", yDown);
 }
 
@@ -97,6 +106,8 @@ function handleTouchEnd(e) {
     sky.style.transitionDuration = "250ms";
     clouds.style.translate = "0 0";
     clouds.style.transitionDuration = "250ms";
+    stars.style.translate = "0 0";
+    stars.style.transitionDuration = "250ms";
 }
 
 function handleTouchMove(e) {
@@ -113,6 +124,7 @@ function handleTouchMove(e) {
     }
     sky.style.height = newSize + "px";
     clouds.style.translate = "0 " + (0 - translateValue) + "px";
+    stars.style.translate = "0 " + (0 - translateValue) + "px";
 }
 
 // Réinitialisation du layout
@@ -182,7 +194,7 @@ function formatDate(date, option = null) {
         let year = parseInt(date.slice(6, 10));
         const fullDate = new Date(year, month - 1, day); // Mois est basé sur 0-index, donc mois - 1
         const options = { month: 'long', day: 'numeric' };
-        if (option == "numeric"){
+        if (option == "numeric") {
             return fullDate;
         } else {
             return fullDate.toLocaleDateString('fr-FR', options);
@@ -206,6 +218,7 @@ function displayMeteo(meteo) {
     sun.classList.remove('rotate');
     let reference = 0;
     let cloudVoverage = null;
+    let night = false;
     const limit = forecastNumber(meteo);
     resetLayout();
 
@@ -239,8 +252,8 @@ function displayMeteo(meteo) {
         cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
         // Récupération de la vitesse du vent
         windSpeed = meteo.current_condition.wnd_spd;
-        // Appel de l'affichage nocturne
-        setNight(meteo.city_info);
+        // Test de l'affichage nocturne
+        night = isNight(meteo);
 
         // Prévision à J+X
     } else if (dayToDisplay > 0) {
@@ -281,6 +294,7 @@ function displayMeteo(meteo) {
     setFontSizes(forecastElt.innerText, cityElt.innerText);
     setClouds(cloudVoverage);
     setTheme(reference);
+    setNight(night);
 }
 
 // Définition des couleurs en fonction de la température
@@ -318,11 +332,28 @@ function setFontSizes(forecast, city) {
 }
 
 // Gestion de la nuit
-function setNight(meteo) {
-    let date = formatDate(meteo.current_condition.date, 'numeric');
-    let sunrise = Date(meteo.sunrise);
-    let sunset = Date(meteo.sunset);
-    let now = Date.now().getTime();
+function isNight(meteo) {
+    let now = Date.now();
+    let sunrise = new Date().setHours(meteo.city_info.sunrise.slice(0, 2), meteo.city_info.sunrise.slice(3, 5));
+    let sunset = new Date().setHours(meteo.city_info.sunset.slice(0, 2), meteo.city_info.sunset.slice(3, 5));
+    return (now < sunrise && now > sunset) || DEBUG;
+}
+
+// Affichage de la nuit
+function setNight(bool = false) {
+    if (bool) {
+        // Il fait nuit
+        ground.classList.add('night');
+        stars.style.display = 'block';
+        sun.style.backgroundColor = '#abc';
+        sky.style.backgroundColor = 'var(--color-night)';
+        horizon.style.borderTopColor = 'var(--color-night)';
+    } else {
+        // Il fait jour
+        ground.classList.remove('night');
+        stars.style.display = 'none';
+        sun.style.backgroundColor = 'var(--color-sun)';
+    }
 }
 
 // Rechargement des résultats

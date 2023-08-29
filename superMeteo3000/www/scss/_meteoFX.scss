@@ -19,7 +19,6 @@
 
 #stars {
     z-index: 0;
-    display: block;
 }
 
 #clouds::after,
@@ -86,7 +85,7 @@
 
 }
 
-#stars::after {
+#stars::after, .stars {
     --angle: -45deg;
     
     /* Texture */
