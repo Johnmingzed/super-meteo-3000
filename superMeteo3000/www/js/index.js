@@ -26,7 +26,10 @@ import { datasForTest } from "./datasForTest.js";
 document.addEventListener('deviceready', onDeviceReady, false);
 
 // Données de debugage
-const DEBUG = false;
+const DEBUG = true;
+
+// Mode développement compatible avec Live Server
+const DEV = true;
 
 // Définition de la ville
 let cityName = "VILLE INCONNUE";
@@ -459,10 +462,21 @@ function geolocationError(error) {
 // Point d'entrée du programme
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-    /* console.log('Running cordova-' + cordova.platformId + '@' + cordova.version); */
+    if (!DEV) {
+        console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+    }
     // Recherhe du signal GPS (asyncrhone)
     navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
 }
 
-// Lancement forcé du programme
-onDeviceReady();
+/**
+ *
+ * Lancement forcé du programme pour utilisation avec Live Server
+ * penser à éditer le fichier index.html avant la mise en production
+ * retirer le 'unsafe-inline' des "Content-Security-Policy"
+ * activer la ligne de script cordova.js
+ */
+
+if (DEV) {
+    onDeviceReady();
+}
