@@ -26,7 +26,7 @@ import { datasForTest } from "./datasForTest.js";
 document.addEventListener('deviceready', onDeviceReady, false);
 
 // Données de debugage
-const DEBUG = true;
+const DEBUG = false;
 
 // Mode développement compatible avec Live Server
 const DEV = true;
@@ -75,7 +75,7 @@ const bottomTextElt = document.getElementById('bottom_text');
 const horizon = document.getElementById('horizon');
 const sky = document.getElementById('sky');
 const stars = document.getElementById('stars');
-const ground = document.getElementsByClassName('background')[0];
+const background = document.getElementsByClassName('background')[0];
 
 // Création des éléments à afficher en plus
 const clouds = document.getElementById('clouds');
@@ -96,21 +96,16 @@ document.addEventListener('touchmove', handleTouchMove);
 // Fonctions permettant le déplacement de l'arrière plan
 function handleTouchStart(e) {
     yDown = e.touches[0].clientY;
-    actualSize = sky.clientHeight;
-    sky.style.transitionDuration = "0ms";
+    actualSize = (horizon.clientHeight - horizon.clientWidth) / 2;
+    horizon.style.transitionDuration = "0ms";
     clouds.style.transitionDuration = "0ms";
-    stars.style.transitionDuration = "0ms";
-    console.log("click at :", yDown);
 }
 
 function handleTouchEnd(e) {
-    console.log("Release");
-    sky.style.height = "calc(50svh - 50svw)";
-    sky.style.transitionDuration = "250ms";
+    horizon.style.setProperty('--horizon-offset', '0px');
+    horizon.style.transitionDuration = "250ms";
     clouds.style.translate = "0 0";
     clouds.style.transitionDuration = "250ms";
-    stars.style.translate = "0 0";
-    stars.style.transitionDuration = "250ms";
 }
 
 function handleTouchMove(e) {
@@ -125,9 +120,8 @@ function handleTouchMove(e) {
         newSize = 0;
         translateValue = actualSize;
     }
-    sky.style.height = newSize + "px";
-    clouds.style.translate = "0 " + (0 - translateValue) + "px";
-    stars.style.translate = "0 " + (0 - translateValue) + "px";
+    horizon.style.setProperty('--horizon-offset', translateValue + 'px');
+    clouds.style.translate = "0 " + (0 - translateValue / 2) + "px";
 }
 
 // Réinitialisation du layout
@@ -304,15 +298,13 @@ function displayMeteo(meteo) {
 function setTheme(reference) {
     // Situation de canicule
     if (reference > 35) {
-        horizon.style.borderTopColor = 'var(--color-hotsky)';
-        sky.style.backgroundColor = 'var(--color-hotsky)';
-        ground.style.backgroundColor = 'var(--color-sand)';
+        sky.style.setProperty('--color', 'var(--color-hotsky)');
+        horizon.style.setProperty('--color', 'var(--color-sand)');
         sun.classList.add('radiate');
         // Temps clair
     } else {
-        horizon.style.borderTopColor = 'var(--color-clearsky)';
-        sky.style.backgroundColor = 'var(--color-clearsky)';
-        ground.style.backgroundColor = 'var(--color-grass)';
+        sky.style.setProperty('--color', 'var(--color-clearsky)');
+        horizon.style.setProperty('--color', 'var(--color-grass)');
         sun.classList.remove('radiate');
     }
 }
@@ -346,16 +338,17 @@ function isNight(meteo) {
 function setNight(bool = false) {
     if (bool) {
         // Il fait nuit
-        ground.classList.add('night');
+        horizon.classList.add('night');
         stars.style.display = 'block';
         sun.style.backgroundColor = '#abc';
-        sky.style.backgroundColor = 'var(--color-night)';
-        horizon.style.borderTopColor = 'var(--color-night)';
+        sky.style.setProperty('--color', 'var(--color-night)');
+        background.style.setProperty('--atmosphere', 'var(--color-night)');
     } else {
         // Il fait jour
-        ground.classList.remove('night');
+        horizon.classList.remove('night');
         stars.style.display = 'none';
         sun.style.backgroundColor = 'var(--color-sun)';
+        background.style.setProperty('--atmosphere', 'rgba(255, 255, 255, 0.5)');
     }
 }
 

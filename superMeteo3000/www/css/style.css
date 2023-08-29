@@ -25,7 +25,7 @@ h3 {
   font-weight: 500;
   text-align: center;
   color: var(--color-white);
-  text-shadow: #123 0.05em 0.05em 0.1em;
+  text-shadow: #123 0em 0em 0.5em;
   text-wrap: balance;
 }
 
@@ -79,35 +79,50 @@ body {
 }
 
 .background {
+  --atmosphere: rgba(255, 255, 255, 0.5);
   z-index: -1;
   position: absolute;
   inset: 0;
   height: inherit;
   width: inherit;
   overflow: inherit;
-  background-color: var(--color-grass);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: start;
 }
 
-.night {
+.night::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+  z-index: 1;
   background: radial-gradient(circle, rgba(0, 16, 32, 0.75), var(--color-night));
 }
 
 #sky {
+  --color: var(--color-clearsky);
   width: inherit;
-  height: calc(50svh - 50svw);
-  background-color: var(--color-clearsky);
+  height: inherit;
+  background-image: linear-gradient(135deg, var(--color), var(--atmosphere));
+  background-color: var(--color);
   transition: height 0ms ease;
 }
 
 #horizon {
-  display: inline-block;
-  border-top: 100svw solid var(--color-clearsky);
-  border-right: 100svw solid transparent;
+  --color: var(--color-grass);
+  --h: 100svh;
+  --w: 100svw;
+  --horizon-offset: 0px;
+  --hl: calc(100% - (var(--h) - var(--w)) / 2 - var(--horizon-offset));
+  --hr: calc((var(--h) - var(--w)) / 2 - var(--horizon-offset));
+  height: var(--h);
+  width: var(--w);
+  position: absolute;
+  background-image: linear-gradient(135deg, var(--atmosphere), var(--color));
+  background-color: var(--color);
   overflow: hidden;
+  clip-path: polygon(0 var(--hl), 100% var(--hr), 100% 100%, 0 100%);
 }
 
 .sun {
@@ -133,10 +148,6 @@ body {
   #sky {
     height: inherit;
     width: calc((100svw - 100svh) / 2);
-  }
-  #horizon {
-    border-top: 100svh solid var(--color-clearsky);
-    border-right: 100svh solid transparent;
   }
   .sun {
     height: 90vh;
@@ -164,6 +175,11 @@ body {
   z-index: 0;
 }
 
+#clouds {
+  overflow: visible;
+  height: calc(100svh - (50svh - 50svw));
+}
+
 #clouds::after,
 #stars::after {
   /* Block settings */
@@ -173,7 +189,6 @@ body {
   content: "";
   height: var(--height);
   width: var(--width);
-  bottom: 50%;
   left: calc(50svw - var(--width) / 2);
   z-index: 1;
   transform: rotate(var(--angle));
@@ -186,7 +201,9 @@ body {
   --AA: 1px;
   --angle: -45deg;
   --color-clouds: #def;
+  --offset: calc(25svh - 25svw);
   opacity: var(--cloud-coverage);
+  bottom: calc(50% - var(--offset));
   /* Texture */
   background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
   /* Patterns sizes */
@@ -198,10 +215,11 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
 }
 
-#stars::after, .stars {
+#stars::after,
+.stars {
   --angle: -45deg;
+  transform-origin: unset;
   /* Texture */
-  background-color: var(--color-night);
   background-image: radial-gradient(white, transparent 2px, transparent 2.7rem), radial-gradient(white, transparent 1px, transparent 2rem), radial-gradient(white, transparent 2px, transparent 1.5rem), radial-gradient(white, transparent 2px, transparent 1rem), radial-gradient(white, rgba(255, 255, 255, 0) 2px, transparent 3rem);
   background-size: 11rem 11rem, 8.5rem 8.5rem, 10rem 10rem, 6rem 6rem, 11.5rem 11.5rem;
   background-position: 1rem 2rem, 5rem 10rem, 8rem 3rem, 8rem 9rem, 7rem 9rem;

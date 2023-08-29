@@ -21,6 +21,11 @@
     z-index: 0;
 }
 
+#clouds {
+    overflow: visible;
+    height: calc(100svh - (50svh - 50svw));
+}
+
 #clouds::after,
 #stars::after {
     /* Block settings */
@@ -30,10 +35,8 @@
     content: "";
     height: var(--height);
     width: var(--width);
-    bottom: 50%;
     left: calc(50svw - var(--width) / 2);
     z-index: 1;
-
     transform: rotate(var(--angle));
     transform-origin: bottom;
 }
@@ -44,7 +47,9 @@
     --AA: 1px;
     --angle: -45deg;
     --color-clouds: #def;
+    --offset: calc(25svh - 25svw);
     opacity: var(--cloud-coverage);
+    bottom: calc(50% - var(--offset));
 
     /* Texture */
     background:
@@ -85,11 +90,12 @@
 
 }
 
-#stars::after, .stars {
+#stars::after,
+.stars {
     --angle: -45deg;
-    
+    transform-origin: unset;
+
     /* Texture */
-    background-color: var(--color-night);
     background-image: radial-gradient(white, transparent 2px, transparent 2.7rem),
         radial-gradient(white, transparent 1px, transparent 2rem),
         radial-gradient(white, transparent 2px, transparent 1.5rem),

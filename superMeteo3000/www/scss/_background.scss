@@ -1,33 +1,51 @@
 .background {
+    --atmosphere: rgba(255, 255, 255, 0.5);
     z-index: -1;
     position: absolute;
     inset: 0;
     height: inherit;
     width: inherit;
     overflow: inherit;
-    background-color: var(--color-grass);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: start;
 }
 
-.night {
-    background: radial-gradient(circle, rgba(0,16,32,0.75), var(--color-night));
+.night::after {
+    position: absolute;
+    content:"";
+    inset:0;
+    z-index: 1;
+    background: radial-gradient(circle, rgba(0, 16, 32, 0.75), var(--color-night));
 }
 
 #sky {
+    --color: var(--color-clearsky);
     width: inherit;
-    height: calc(50svh - 50svw);
-    background-color: var(--color-clearsky);
+    height: inherit;
+    background-image: linear-gradient(135deg, var(--color), var(--atmosphere));
+    background-color: var(--color);
     transition: height 0ms ease;
 }
 
 #horizon {
-    display: inline-block;
-    border-top: 100svw solid var(--color-clearsky);
-    border-right: 100svw solid transparent;
+    --color: var(--color-grass);
+    --h: 100svh;
+    --w: 100svw;
+    --horizon-offset: 0px;
+    --hl: calc(100% - (var(--h) - var(--w)) / 2 - var(--horizon-offset));
+    --hr: calc((var(--h) - var(--w)) / 2 - var(--horizon-offset));
+    height: var(--h);
+    width: var(--w);
+    position: absolute;
+    background-image: linear-gradient(135deg, var(--atmosphere), var(--color));
+    background-color: var(--color);
     overflow: hidden;
+    clip-path: polygon(0 var(--hl),
+            100% var(--hr),
+            100% 100%,
+            0 100%);
 }
 
 .sun {
@@ -58,11 +76,6 @@
     #sky {
         height: inherit;
         width: calc((100svw - 100svh) / 2);
-    }
-
-    #horizon {
-        border-top: 100svh solid var(--color-clearsky);
-        border-right: 100svh solid transparent;
     }
 
     .sun {
