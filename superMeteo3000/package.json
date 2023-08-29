@@ -28,6 +28,7 @@
     }
   },
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "swiped-events": "^1.1.7"
   }
 }
