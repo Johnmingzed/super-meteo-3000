@@ -331,7 +331,10 @@ function isNight(meteo) {
     let now = Date.now();
     let sunrise = new Date().setHours(meteo.city_info.sunrise.slice(0, 2), meteo.city_info.sunrise.slice(3, 5));
     let sunset = new Date().setHours(meteo.city_info.sunset.slice(0, 2), meteo.city_info.sunset.slice(3, 5));
-    return (now < sunrise && now > sunset) || DEBUG;
+    if(now <= sunrise || now >= sunset) {
+        console.log('Il fait nuit');
+    }
+    return (now <= sunrise || now >= sunset) || DEBUG;
 }
 
 // Affichage de la nuit
