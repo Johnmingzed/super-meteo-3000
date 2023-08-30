@@ -29,7 +29,7 @@ document.addEventListener('deviceready', onDeviceReady, false);
 const DEBUG = false;
 
 // Mode développement compatible avec Live Server
-const DEV = true;
+const DEV = false;
 
 // Définition de la ville
 let cityName = "VILLE INCONNUE";
@@ -315,7 +315,11 @@ function setClouds(meteo) {
     const mediumClouds = parseInt(meteo.MCDC);
     const lowClouds = parseInt(meteo.LCDC);
     const coverage = Math.trunc((highClouds + mediumClouds + lowClouds) / 3);
+    const density = Math.trunc(100 - (mediumClouds + lowClouds) / 2);
+    // Opacité des nuages
     document.documentElement.style.setProperty('--cloud-coverage', coverage / 100);
+    // Densité des nuages
+    document.documentElement.style.setProperty('--cloud-space', (density * 0.12 + 0.5) + "rem");
 }
 
 // Longueur des noms
@@ -331,7 +335,7 @@ function isNight(meteo) {
     let now = Date.now();
     let sunrise = new Date().setHours(meteo.city_info.sunrise.slice(0, 2), meteo.city_info.sunrise.slice(3, 5));
     let sunset = new Date().setHours(meteo.city_info.sunset.slice(0, 2), meteo.city_info.sunset.slice(3, 5));
-    if(now <= sunrise || now >= sunset) {
+    if (now <= sunrise || now >= sunset) {
         console.log('Il fait nuit');
     }
     return (now <= sunrise || now >= sunset) || DEBUG;

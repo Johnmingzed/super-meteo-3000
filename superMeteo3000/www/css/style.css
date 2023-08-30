@@ -3,7 +3,7 @@
   src: url("../fonts/Inter-Variable.ttf") format("truetype");
 }
 :root {
-  --color-night:#012;
+  --color-night: #012;
   --color-dark: #123;
   --color-clearsky: #57B2F3;
   --color-hotsky: #66C1DD;
@@ -13,6 +13,7 @@
   --color-sand: #C1B27E;
   --wind-speed: 0;
   --cloud-coverage: 0;
+  --cloud-space: 0.5rem;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
@@ -198,6 +199,7 @@ body {
 #clouds::after {
   /* Clouds Settings */
   --size: 3rem;
+  --space: var(--cloud-space);
   --AA: 1px;
   --angle: -45deg;
   --color-clouds: #def;
@@ -205,11 +207,11 @@ body {
   opacity: var(--cloud-coverage);
   bottom: calc(50% - var(--offset));
   /* Texture */
-  background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) * 3.75) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
+  background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) + var(--space)) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) + var(--space)) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
   /* Patterns sizes */
-  background-size: calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 1.25) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5), calc(var(--size) * 5) calc(var(--size) * 2.5);
+  background-size: calc(var(--size) + var(--space)) calc(var(--size) + var(--space)), calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space)) * 2), calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space)) * 2);
   /* Offest patterns positions */
-  background-position: 0 calc(100% + var(--size) * 0.625), calc(var(--size) * 0.625) calc(100% + var(--size) * -0.625), calc(var(--size) * 5) calc(100% + var(--size) * 0.125), calc(var(--size) * 1.875) calc(100% + var(--size) * 1.375);
+  background-position: 0 0, calc((var(--size) + var(--space)) * 0.5) calc(var(--space) * 0.5), calc((var(--size) + var(--space)) * 1.5) calc(var(--space) * 1.5 + var(--size));
   /* Alpha gradient */
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));

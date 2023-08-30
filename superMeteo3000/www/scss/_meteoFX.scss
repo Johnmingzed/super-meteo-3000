@@ -44,6 +44,7 @@
 #clouds::after {
     /* Clouds Settings */
     --size: 3rem;
+    --space: var(--cloud-space);
     --AA: 1px;
     --angle: -45deg;
     --color-clouds: #def;
@@ -57,32 +58,25 @@
         radial-gradient(circle,
             var(--color-clouds) calc(var(--size) / 2 - var(--AA)),
             transparent calc(var(--size) / 2)),
-        /* Circles 2 */
-        radial-gradient(circle,
-            var(--color-clouds) calc(var(--size) / 2 - var(--AA)),
-            transparent calc(var(--size) / 2)),
         /* Rectangles 1 */
-        conic-gradient(at calc(var(--size) * 3.75) var(--size),
+        conic-gradient(at calc(var(--size) + var(--space)) var(--size),
             transparent 0.25turn 0.75turn,
             var(--color-clouds) 0.75turn),
         /* Rectangles 2 */
-        conic-gradient(at calc(var(--size) * 3.75) var(--size),
+        conic-gradient(at calc(var(--size) + var(--space)) var(--size),
             transparent 0.25turn 0.75turn,
             var(--color-clouds) 0.75turn);
-
     /* Patterns sizes */
     background-size:
-        calc(var(--size) * 1.25) calc(var(--size) * 2.5),
-        calc(var(--size) * 1.25) calc(var(--size) * 2.5),
-        calc(var(--size) * 5) calc(var(--size) * 2.5),
-        calc(var(--size) * 5) calc(var(--size) * 2.5);
+        calc(var(--size) + var(--space)) calc(var(--size) + var(--space)),
+        calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space))*2),
+        calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space))*2);
 
     /* Offest patterns positions */
     background-position:
-        0 calc(100% + var(--size) * 0.625),
-        calc(var(--size) * 0.625) calc(100% + var(--size) * -0.625),
-        calc(var(--size) * 5) calc(100% + var(--size) * 0.125),
-        calc(var(--size) * 1.875) calc(100% + var(--size) * 1.375);
+        0 0,
+        calc((var(--size) + var(--space)) * 0.5) calc(var(--space)*0.5),
+        calc((var(--size) + var(--space)) * 1.5) calc(var(--space)*1.5 + var(--size));
 
     /* Alpha gradient */
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));

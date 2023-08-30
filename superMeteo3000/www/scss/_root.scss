@@ -1,5 +1,5 @@
 :root {
-    --color-night:#012;
+    --color-night: #012;
     --color-dark: #123;
     --color-clearsky: #57B2F3;
     --color-hotsky: #66C1DD;
@@ -9,6 +9,7 @@
     --color-sand: #C1B27E;
     --wind-speed: 0;
     --cloud-coverage: 0;
+    --cloud-space: 0.5rem;
     font-family: 'Inter', system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 4.5vw;
     color: var(--color-dark);
