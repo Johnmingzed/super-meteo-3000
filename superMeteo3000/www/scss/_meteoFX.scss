@@ -43,7 +43,7 @@
 
 #clouds::after {
     /* Clouds Settings */
-    --size: 3rem;
+    --size: var(--cloud-size);
     --space: var(--cloud-space);
     --AA: 1px;
     --angle: -45deg;
@@ -51,6 +51,7 @@
     --offset: calc(25svh - 25svw);
     opacity: var(--cloud-coverage);
     bottom: calc(50% - var(--offset));
+    filter:blur(0.5px);
 
     /* Texture */
     background:
@@ -74,9 +75,9 @@
 
     /* Offest patterns positions */
     background-position:
-        0 0,
-        calc((var(--size) + var(--space)) * 0.5) calc(var(--space)*0.5),
-        calc((var(--size) + var(--space)) * 1.5) calc(var(--space)*1.5 + var(--size));
+        0 100%,
+        calc((var(--size) + var(--space)) * 0.5) calc(100% + var(--space)*0.5),
+        calc((var(--size) + var(--space)) * 1.5) calc(100% + var(--space)*1.5 + var(--size));
 
     /* Alpha gradient */
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
@@ -88,6 +89,7 @@
 .stars {
     --angle: -45deg;
     transform-origin: unset;
+    opacity: calc(1 - var(--high-cloud));
 
     /* Texture */
     background-image: radial-gradient(white, transparent 2px, transparent 2.7rem),

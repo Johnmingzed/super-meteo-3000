@@ -5,7 +5,7 @@
 :root {
   --color-night: #012;
   --color-dark: #123;
-  --color-clearsky: #57B2F3;
+  --color-clearsky: #0095ff;
   --color-hotsky: #66C1DD;
   --color-white: #cde;
   --color-sun: #fd6;
@@ -14,6 +14,8 @@
   --wind-speed: 0;
   --cloud-coverage: 0;
   --cloud-space: 0.5rem;
+  --cloud-size:3rem;
+  --high-cloud: 0;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
@@ -80,7 +82,7 @@ body {
 }
 
 .background {
-  --atmosphere: rgba(255, 255, 255, 0.5);
+  --atmosphere: rgba(255, 255, 255, 0.3);
   z-index: -1;
   position: absolute;
   inset: 0;
@@ -102,12 +104,22 @@ body {
 }
 
 #sky {
+  --opacity: var(--high-cloud);
   --color: var(--color-clearsky);
   width: inherit;
   height: inherit;
-  background-image: linear-gradient(135deg, var(--color), var(--atmosphere));
+  background-image: linear-gradient(135deg, var(--color), var(--atmosphere), var(--color));
   background-color: var(--color);
   transition: height 0ms ease;
+}
+
+#sky::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+  z-index: 0;
+  background: #cde;
+  opacity: var(--opacity);
 }
 
 #horizon {
@@ -120,7 +132,7 @@ body {
   height: var(--h);
   width: var(--w);
   position: absolute;
-  background-image: linear-gradient(135deg, var(--atmosphere), var(--color));
+  background-image: linear-gradient(135deg, var(--color), var(--atmosphere), var(--color));
   background-color: var(--color);
   overflow: hidden;
   clip-path: polygon(0 var(--hl), 100% var(--hr), 100% 100%, 0 100%);
@@ -198,7 +210,7 @@ body {
 
 #clouds::after {
   /* Clouds Settings */
-  --size: 3rem;
+  --size: var(--cloud-size);
   --space: var(--cloud-space);
   --AA: 1px;
   --angle: -45deg;
@@ -206,12 +218,13 @@ body {
   --offset: calc(25svh - 25svw);
   opacity: var(--cloud-coverage);
   bottom: calc(50% - var(--offset));
+  filter: blur(0.5px);
   /* Texture */
   background: radial-gradient(circle, var(--color-clouds) calc(var(--size) / 2 - var(--AA)), transparent calc(var(--size) / 2)), conic-gradient(at calc(var(--size) + var(--space)) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn), conic-gradient(at calc(var(--size) + var(--space)) var(--size), transparent 0.25turn 0.75turn, var(--color-clouds) 0.75turn);
   /* Patterns sizes */
   background-size: calc(var(--size) + var(--space)) calc(var(--size) + var(--space)), calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space)) * 2), calc((var(--size) + var(--space)) * 2) calc((var(--size) + var(--space)) * 2);
   /* Offest patterns positions */
-  background-position: 0 0, calc((var(--size) + var(--space)) * 0.5) calc(var(--space) * 0.5), calc((var(--size) + var(--space)) * 1.5) calc(var(--space) * 1.5 + var(--size));
+  background-position: 0 100%, calc((var(--size) + var(--space)) * 0.5) calc(100% + var(--space) * 0.5), calc((var(--size) + var(--space)) * 1.5) calc(100% + var(--space) * 1.5 + var(--size));
   /* Alpha gradient */
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgb(0, 0, 0));
@@ -221,6 +234,7 @@ body {
 .stars {
   --angle: -45deg;
   transform-origin: unset;
+  opacity: calc(1 - var(--high-cloud));
   /* Texture */
   background-image: radial-gradient(white, transparent 2px, transparent 2.7rem), radial-gradient(white, transparent 1px, transparent 2rem), radial-gradient(white, transparent 2px, transparent 1.5rem), radial-gradient(white, transparent 2px, transparent 1rem), radial-gradient(white, rgba(255, 255, 255, 0) 2px, transparent 3rem);
   background-size: 11rem 11rem, 8.5rem 8.5rem, 10rem 10rem, 6rem 6rem, 11.5rem 11.5rem;
@@ -326,8 +340,8 @@ body {
     left: calc(50svw - var(--width) / 2);
   }
   to {
-    width: calc(var(--width) + var(--size) * 10);
-    left: calc(50svw - (var(--width) + var(--size) * 10) / 2);
+    width: calc(var(--width) + (var(--size) + var(--space)) * 4);
+    left: calc(50svw - (var(--width) + (var(--size) + var(--space)) * 4) / 2);
   }
 }
 #clouds::after {
@@ -347,6 +361,10 @@ body {
 .rotate {
   background: conic-gradient(var(--color-sun), #fff);
   animation: rotation 1000ms infinite linear;
+}
+
+#stars::after {
+  animation: rotation 200000ms infinite linear;
 }
 
 /*# sourceMappingURL=style.css.map */

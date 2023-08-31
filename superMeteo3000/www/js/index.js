@@ -26,7 +26,7 @@ import { datasForTest } from "./datasForTest.js";
 document.addEventListener('deviceready', onDeviceReady, false);
 
 // Données de debugage
-const DEBUG = false;
+const DEBUG = true;
 
 // Mode développement compatible avec Live Server
 const DEV = false;
@@ -131,6 +131,7 @@ function resetLayout() {
     maxminTempElt.classList.remove('only');
     infosElt.innerText = "";
     clouds.style.setProperty('display', 'none');
+    sky.style.setProperty('--opacity', 'var(--high-cloud)');
 }
 
 // Interrogation de l'API meteo
@@ -210,11 +211,24 @@ function forecastNumber(meteo) {
     return count;
 }
 
+// Calcule la valeur moyenne d'une propriété sur la journée
+function average(forecast_day, property) {
+    let average = 0;
+    let count = 0;
+    for (let hour = 0; hour < 24; hour++) {
+        average += parseInt(forecast_day.hourly_data[`${hour}H00`][`${property}`]);
+        count++;
+    }
+    const result = Math.trunc(average / count);
+    console.log(`Moyenne de ${property} sur la journée : ${result}`);
+    return result;
+}
+
 // Affiche les résultats
 function displayMeteo(meteo) {
     sun.classList.remove('rotate');
     let reference = 0;
-    let cloudVoverage = null;
+    let cloudCoverage = null;
     let night = false;
     const limit = forecastNumber(meteo);
     resetLayout();
@@ -246,7 +260,8 @@ function displayMeteo(meteo) {
         // Référence pour le thême des couleurs
         reference = meteo.current_condition.tmp;
         // Référence pour la couverture nuageuse
-        cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
+        const hour = meteo.current_condition.hour.replace(":", "H");
+        cloudCoverage = [meteo[`fcst_day_${dayToDisplay}`], hour];
         // Récupération de la vitesse du vent
         windSpeed = meteo.current_condition.wnd_spd;
         // Test de l'affichage nocturne
@@ -270,9 +285,11 @@ function displayMeteo(meteo) {
         // Référence pour le thême des couleurs
         reference = meteo[`fcst_day_${dayToDisplay}`].tmax;
         // Référence pour la couverture nuageuse
-        cloudVoverage = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'];
+        cloudCoverage = [meteo[`fcst_day_${dayToDisplay}`], null];
         // Récupération de la vitesse du vent
+        // calculer la moyenne sur la journée
         windSpeed = meteo[`fcst_day_${dayToDisplay}`].hourly_data['14H00'].WNDSPD10m;
+        windSpeed = average(meteo[`fcst_day_${dayToDisplay}`], 'WNDSPD10m');
     }
 
     // Préparations de la sélection des prochaines prévisions
@@ -289,7 +306,7 @@ function displayMeteo(meteo) {
     }
 
     setFontSizes(forecastElt.innerText, cityElt.innerText);
-    setClouds(cloudVoverage);
+    setClouds(cloudCoverage);
     setTheme(reference);
     setNight(night);
 }
@@ -310,16 +327,29 @@ function setTheme(reference) {
 }
 
 // Réglage de la couverture nuageuse
-function setClouds(meteo) {
-    const highClouds = parseInt(meteo.HCDC);
-    const mediumClouds = parseInt(meteo.MCDC);
-    const lowClouds = parseInt(meteo.LCDC);
+function setClouds(array) {
+    let meteo = array[0];
+    let hour = array[1];
+    let highClouds = null;
+    let mediumClouds = null;
+    let lowClouds = null;
+    if (hour) {
+        highClouds = parseInt(meteo.hourly_data[hour].HCDC);
+        mediumClouds = parseInt(meteo.hourly_data[hour].MCDC);
+        lowClouds = parseInt(meteo.hourly_data[hour].LCDC);
+    } else {
+        highClouds = parseInt(average(meteo, 'HCDC'));
+        mediumClouds = parseInt(average(meteo, 'MCDC'));
+        lowClouds = parseInt(average(meteo, 'LCDC'));
+    }
     const coverage = Math.trunc((highClouds + mediumClouds + lowClouds) / 3);
     const density = Math.trunc(100 - (mediumClouds + lowClouds) / 2);
+    document.documentElement.style.setProperty('--high-cloud', highClouds / 100);
     // Opacité des nuages
-    document.documentElement.style.setProperty('--cloud-coverage', coverage / 100);
+    document.documentElement.style.setProperty('--cloud-coverage', mediumClouds / 100);
     // Densité des nuages
-    document.documentElement.style.setProperty('--cloud-space', (density * 0.12 + 0.5) + "rem");
+    document.documentElement.style.setProperty('--cloud-space', ((100 - lowClouds) * 0.12 + 0.5) + "rem");
+    document.documentElement.style.setProperty('--cloud-size', (lowClouds * 0.07 + 3) + "rem");
 }
 
 // Longueur des noms
@@ -349,6 +379,7 @@ function setNight(bool = false) {
         stars.style.display = 'block';
         sun.style.backgroundColor = '#abc';
         sky.style.setProperty('--color', 'var(--color-night)');
+        sky.style.setProperty('--opacity', 'calc(var(--high-cloud)/4)');
         background.style.setProperty('--atmosphere', 'var(--color-night)');
     } else {
         // Il fait jour
@@ -441,6 +472,10 @@ var geolocationSuccess = async function (position) {
     console.log(position);
     // Interrogation de l'API météo et affiche le résultat
     getCoordinates(position);
+    if (DEBUG) {
+        Latitude = 48.390394;
+        Longitude = -4.486076;
+    }
     cityName = await fetchCity(Longitude, Latitude);
     console.log(Latitude, Longitude, cityName);
     // Transition fadeout

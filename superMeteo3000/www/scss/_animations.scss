@@ -24,8 +24,9 @@
 
 @keyframes rotation {
     from {
-        rotate:0;
+        rotate: 0;
     }
+
     to {
         rotate: 360deg;
     }
@@ -33,12 +34,14 @@
 
 @keyframes wind {
     from {
+
         width: var(--width);
         left: calc(50svw - var(--width) / 2);
     }
+
     to {
-        width: calc(var(--width) + var(--size) * 10);
-        left: calc(50svw - (var(--width) + var(--size) * 10) / 2);
+        width: calc(var(--width) + (var(--size) + var(--space)) * 4);
+        left: calc(50svw - (var(--width) + (var(--size) + var(--space)) * 4) / 2);
     }
 }
 
@@ -59,4 +62,8 @@
 .rotate {
     background: conic-gradient(var(--color-sun), #fff);
     animation: rotation 1000ms infinite linear;
+}
+
+#stars::after {
+    animation: rotation 200000ms infinite linear;
 }
