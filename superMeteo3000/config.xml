@@ -20,7 +20,8 @@
             xxhdpi  : 144x144 px
             xxxhdpi : 192x192 px
         -->
-        <icon background="www/icon/android/ldpi-background.png" density="ldpi"
+        <!--icon
+        background="www/icon/android/ldpi-background.png" density="ldpi"
             foreground="www/icon/android/ldpi-foreground.png" />
         <icon background="www/icon/android/mdpi-background.png" density="mdpi"
             foreground="www/icon/android/mdpi-foreground.png" />
@@ -31,6 +32,8 @@
         <icon background="www/icon/android/xxhdpi-background.png" density="xxhdpi"
             foreground="www/icon/android/xxhdpi-foreground.png" />
         <icon background="www/icon/android/xxxhdpi-background.png" density="xxxhdpi"
-            foreground="www/icon/android/xxxhdpi-foreground.png" />
+            foreground="www/icon/android/xxxhdpi-foreground.png" /-->
+        <icon background="www/icon/android/background-adaptative.png" density="xhdpi"
+            foreground="www/icon/android/foreground-adaptative.png" />
     </platform>
 </widget>

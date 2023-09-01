@@ -26,11 +26,11 @@ import { datasForTest } from "./datasForTest.js";
 document.addEventListener('deviceready', onDeviceReady, false);
 
 // Données de debugage
-const DEBUG = true;
+const DEBUG = false;
 const testCity = 'Strasbourg';
 
 // Mode développement compatible avec Live Server
-const DEV = true;
+const DEV = false;
 
 // Définition de la ville
 let cityName = "VILLE INCONNUE";
@@ -219,12 +219,23 @@ function average(forecast_day, property) {
     let average = 0;
     let count = 0;
     for (let hour = 0; hour < 24; hour++) {
-        average += parseInt(forecast_day.hourly_data[`${hour}H00`][`${property}`]);
+        average += parseFloat(forecast_day.hourly_data[`${hour}H00`][`${property}`]);
         count++;
     }
     const result = Math.trunc(average / count);
     console.log(`Moyenne de ${property} sur la journée : ${result}`);
     return result;
+}
+
+// Calcule la valeur totale d'une propriété sur la journée
+function cumulative(forecast_day, property) {
+    let total = 0;
+    for (let hour = 0; hour < 24; hour++) {
+        total += parseFloat(forecast_day.hourly_data[`${hour}H00`][`${property}`]);
+    }
+    const result = total.toFixed(2);
+    console.log(`Total de ${property} sur la journée : ${result}`);
+    return parseFloat(result);
 }
 
 // Affiche les résultats
@@ -353,8 +364,8 @@ function setClouds(array) {
     // Opacité des nuages
     document.documentElement.style.setProperty('--cloud-coverage', mediumClouds / 100);
     // Densité des nuages
-    document.documentElement.style.setProperty('--cloud-space', ((100 - lowClouds) * 0.12 + 0.5) + "rem");
-    document.documentElement.style.setProperty('--cloud-size', (lowClouds * 0.07 + 3) + "rem");
+    document.documentElement.style.setProperty('--cloud-space', ((100 - density) * 0.12 + 0.5) + "rem");
+    document.documentElement.style.setProperty('--cloud-size', (density * 0.07 + 3) + "rem");
 }
 
 // Réglage de la pluie
@@ -365,16 +376,22 @@ function setRain(array) {
     if (hour) {
         hour = parseInt(hour) + "H00";
         rain = meteo.hourly_data[hour].APCPsfc;
+        console.log("Pluie dans l'heure :", rain);
     } else {
-        rain = parseInt(average(meteo, 'APCPsfc'));
+        rain = parseFloat(cumulative(meteo, 'APCPsfc'));
+        console.log("Total de pluie sur la journée :", rain);
     }
     const frame = document.createElement('div');
     frame.classList.add('rain');
     if (rain) {
         rainElt.appendChild(frame);
-        makeItRain(frame, 100);
+        makeItRain(frame, parseFloat(rain + 0.1) * 50);
+        const cloudsForRain = {
+            hourly_data[hour].HCDC;
+            hourly_data[hour].MCDC;
+            hourly_data[hour].LCDC;
+        }
     }
-    console.log("Pluie :", rain);
 }
 
 // Création de la pluie
