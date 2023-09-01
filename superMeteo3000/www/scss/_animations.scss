@@ -45,6 +45,16 @@
     }
 }
 
+@keyframes itsRaining {
+    from {
+        bottom: 100%;
+    }
+
+    to {
+        bottom: calc(var(--drop-lenght) * -1);
+    }
+}
+
 #clouds::after {
     animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
     -webkit-animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
@@ -66,4 +76,8 @@
 
 #stars::after {
     animation: rotation 200000ms infinite linear;
+}
+
+drop {
+    animation: itsRaining var(--drop-duration) linear infinite;
 }

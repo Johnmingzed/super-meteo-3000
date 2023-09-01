@@ -27,9 +27,10 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 // Données de debugage
 const DEBUG = true;
+const testCity = 'Strasbourg';
 
 // Mode développement compatible avec Live Server
-const DEV = false;
+const DEV = true;
 
 // Définition de la ville
 let cityName = "VILLE INCONNUE";
@@ -72,10 +73,11 @@ const topTextElt = document.getElementById('top_text');
 const bottomTextElt = document.getElementById('bottom_text');
 
 // Sélection des éléments graphiques
-const horizon = document.getElementById('horizon');
-const sky = document.getElementById('sky');
-const stars = document.getElementById('stars');
-const background = document.getElementsByClassName('background')[0];
+const horizonElt = document.getElementById('horizon');
+const skyElt = document.getElementById('sky');
+const starsElt = document.getElementById('stars');
+const backgroundElt = document.getElementsByClassName('background')[0];
+const rainElt = document.getElementById('rain');
 
 // Création des éléments à afficher en plus
 const clouds = document.getElementById('clouds');
@@ -96,14 +98,14 @@ document.addEventListener('touchmove', handleTouchMove);
 // Fonctions permettant le déplacement de l'arrière plan
 function handleTouchStart(e) {
     yDown = e.touches[0].clientY;
-    actualSize = (horizon.clientHeight - horizon.clientWidth) / 2;
-    horizon.style.transitionDuration = "0ms";
+    actualSize = (horizonElt.clientHeight - horizonElt.clientWidth) / 2;
+    horizonElt.style.transitionDuration = "0ms";
     clouds.style.transitionDuration = "0ms";
 }
 
 function handleTouchEnd(e) {
-    horizon.style.setProperty('--horizon-offset', '0px');
-    horizon.style.transitionDuration = "250ms";
+    horizonElt.style.setProperty('--horizon-offset', '0px');
+    horizonElt.style.transitionDuration = "250ms";
     clouds.style.translate = "0 0";
     clouds.style.transitionDuration = "250ms";
 }
@@ -120,7 +122,7 @@ function handleTouchMove(e) {
         newSize = 0;
         translateValue = actualSize;
     }
-    horizon.style.setProperty('--horizon-offset', translateValue + 'px');
+    horizonElt.style.setProperty('--horizon-offset', translateValue + 'px');
     clouds.style.translate = "0 " + (0 - translateValue / 2) + "px";
 }
 
@@ -131,7 +133,8 @@ function resetLayout() {
     maxminTempElt.classList.remove('only');
     infosElt.innerText = "";
     clouds.style.setProperty('display', 'none');
-    sky.style.setProperty('--opacity', 'var(--high-cloud)');
+    skyElt.style.setProperty('--opacity', 'var(--high-cloud)');
+    rainElt.innerHTML = "";
 }
 
 // Interrogation de l'API meteo
@@ -307,6 +310,7 @@ function displayMeteo(meteo) {
 
     setFontSizes(forecastElt.innerText, cityElt.innerText);
     setClouds(cloudCoverage);
+    setRain(cloudCoverage);
     setTheme(reference);
     setNight(night);
 }
@@ -315,13 +319,13 @@ function displayMeteo(meteo) {
 function setTheme(reference) {
     // Situation de canicule
     if (reference > 35) {
-        sky.style.setProperty('--color', 'var(--color-hotsky)');
-        horizon.style.setProperty('--color', 'var(--color-sand)');
+        skyElt.style.setProperty('--color', 'var(--color-hotsky)');
+        horizonElt.style.setProperty('--color', 'var(--color-sand)');
         sun.classList.add('radiate');
         // Temps clair
     } else {
-        sky.style.setProperty('--color', 'var(--color-clearsky)');
-        horizon.style.setProperty('--color', 'var(--color-grass)');
+        skyElt.style.setProperty('--color', 'var(--color-clearsky)');
+        horizonElt.style.setProperty('--color', 'var(--color-grass)');
         sun.classList.remove('radiate');
     }
 }
@@ -334,6 +338,7 @@ function setClouds(array) {
     let mediumClouds = null;
     let lowClouds = null;
     if (hour) {
+        hour = parseInt(hour) + "H00";
         highClouds = parseInt(meteo.hourly_data[hour].HCDC);
         mediumClouds = parseInt(meteo.hourly_data[hour].MCDC);
         lowClouds = parseInt(meteo.hourly_data[hour].LCDC);
@@ -350,6 +355,52 @@ function setClouds(array) {
     // Densité des nuages
     document.documentElement.style.setProperty('--cloud-space', ((100 - lowClouds) * 0.12 + 0.5) + "rem");
     document.documentElement.style.setProperty('--cloud-size', (lowClouds * 0.07 + 3) + "rem");
+}
+
+// Réglage de la pluie
+function setRain(array) {
+    let meteo = array[0];
+    let hour = array[1];
+    let rain = null;
+    if (hour) {
+        hour = parseInt(hour) + "H00";
+        rain = meteo.hourly_data[hour].APCPsfc;
+    } else {
+        rain = parseInt(average(meteo, 'APCPsfc'));
+    }
+    const frame = document.createElement('div');
+    frame.classList.add('rain');
+    if (rain) {
+        rainElt.appendChild(frame);
+        makeItRain(frame, 100);
+    }
+    console.log("Pluie :", rain);
+}
+
+// Création de la pluie
+function makeItRain(frame, number) {
+    frame.innerHTML = "";
+    const durationValue = getComputedStyle(
+        document.documentElement
+    ).getPropertyValue("--drop-duration");
+    let dropNumber = 0;
+    const offset = 100 / (number + 1);
+    while (dropNumber < number) {
+        const randomDelay = Math.random() * parseFloat(durationValue);
+        const randomVariation = parseFloat(durationValue) + Math.random() / 2;
+        const drop = document.createElement("drop");
+
+        drop.style.setProperty("left", offset * (1 + dropNumber) + "%");
+        drop.style.setProperty("animation-delay", randomDelay.toFixed(2) + "s");
+        drop.style.setProperty(
+            "animation-duration",
+            randomVariation.toFixed(2) + "s"
+        );
+
+        frame.appendChild(drop);
+
+        dropNumber++;
+    }
 }
 
 // Longueur des noms
@@ -375,18 +426,18 @@ function isNight(meteo) {
 function setNight(bool = false) {
     if (bool) {
         // Il fait nuit
-        horizon.classList.add('night');
-        stars.style.display = 'block';
+        horizonElt.classList.add('night');
+        starsElt.style.display = 'block';
         sun.style.backgroundColor = '#abc';
-        sky.style.setProperty('--color', 'var(--color-night)');
-        sky.style.setProperty('--opacity', 'calc(var(--high-cloud)/4)');
-        background.style.setProperty('--atmosphere', 'var(--color-night)');
+        skyElt.style.setProperty('--color', 'var(--color-night)');
+        skyElt.style.setProperty('--opacity', 'calc(var(--high-cloud)/4)');
+        backgroundElt.style.setProperty('--atmosphere', 'var(--color-night)');
     } else {
         // Il fait jour
-        horizon.classList.remove('night');
-        stars.style.display = 'none';
+        horizonElt.classList.remove('night');
+        starsElt.style.display = 'none';
         sun.style.backgroundColor = 'var(--color-sun)';
-        background.style.setProperty('--atmosphere', 'rgba(255, 255, 255, 0.5)');
+        backgroundElt.style.setProperty('--atmosphere', 'rgba(255, 255, 255, 0.5)');
     }
 }
 
@@ -473,16 +524,16 @@ var geolocationSuccess = async function (position) {
     // Interrogation de l'API météo et affiche le résultat
     getCoordinates(position);
     if (DEBUG) {
-        Latitude = 48.390394;
-        Longitude = -4.486076;
+        cityName = testCity;
+    } else {
+        cityName = await fetchCity(Longitude, Latitude);
     }
-    cityName = await fetchCity(Longitude, Latitude);
     console.log(Latitude, Longitude, cityName);
     // Transition fadeout
     await transition('fadeout');
     resetLayout();
     // Récupération de la météo
-    await fetchMeteo(urlMeteo + 'lat=' + Latitude.toFixed(2) + 'lng=' + Longitude.toFixed(2));
+    await fetchMeteo(urlMeteo + cityName);
     // Transition fadein
     await transition('fadein');
 };

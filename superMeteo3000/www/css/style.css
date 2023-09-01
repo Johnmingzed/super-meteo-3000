@@ -16,6 +16,8 @@
   --cloud-space: 0.5rem;
   --cloud-size:3rem;
   --high-cloud: 0;
+  --drop-lenght: 20rem;
+  --drop-duration: 0.55s;
   font-family: "Inter", system-ui, -apple-system, -apple-system-font, "Segoe UI", "Roboto", sans-serif;
   font-size: 4.5vw;
   color: var(--color-dark);
@@ -175,13 +177,31 @@ body {
   overflow: inherit;
 }
 
+drop {
+  display: block;
+  box-sizing: border-box;
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  height: var(--drop-lenght);
+  width: 0.5rem;
+  border-radius: 3em;
+  background-image: linear-gradient(transparent, rgba(128, 128, 255, 0.2), rgba(0, 128, 255, 0.5));
+  translate: -50% 0;
+}
+
 #clouds,
-#stars {
+#stars,
+#rain {
   position: absolute;
   height: inherit;
   width: inherit;
   overflow: inherit;
   display: none;
+}
+
+#rain {
+  display: block;
 }
 
 #stars {
@@ -206,6 +226,22 @@ body {
   z-index: 1;
   transform: rotate(var(--angle));
   transform-origin: bottom;
+}
+
+.rain {
+  position: absolute;
+  content: "";
+  height: 142svh;
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  transform-origin: center;
+  z-index: 1;
+  rotate: -45deg;
+  /* Alpha gradient */
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 25%, rgb(0, 0, 0));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 25%, rgb(0, 0, 0));
 }
 
 #clouds::after {
@@ -344,6 +380,14 @@ body {
     left: calc(50svw - (var(--width) + (var(--size) + var(--space)) * 4) / 2);
   }
 }
+@keyframes itsRaining {
+  from {
+    bottom: 100%;
+  }
+  to {
+    bottom: calc(var(--drop-lenght) * -1);
+  }
+}
 #clouds::after {
   animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
   -webkit-animation: wind calc(6000000ms / var(--wind-speed) / var(--wind-speed)) linear infinite;
@@ -365,6 +409,10 @@ body {
 
 #stars::after {
   animation: rotation 200000ms infinite linear;
+}
+
+drop {
+  animation: itsRaining var(--drop-duration) linear infinite;
 }
 
 /*# sourceMappingURL=style.css.map */
