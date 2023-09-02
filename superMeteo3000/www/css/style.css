@@ -15,6 +15,7 @@
   --cloud-coverage: 0;
   --cloud-space: 0.5rem;
   --cloud-size:3rem;
+  --cloud-color:#def;
   --high-cloud: 0;
   --drop-lenght: 20rem;
   --drop-duration: 0.55s;
@@ -250,7 +251,7 @@ drop {
   --space: var(--cloud-space);
   --AA: 1px;
   --angle: -45deg;
-  --color-clouds: #def;
+  --color-clouds: var(--cloud-color);
   --offset: calc(25svh - 25svw);
   opacity: var(--cloud-coverage);
   bottom: calc(50% - var(--offset));

@@ -83,7 +83,7 @@ drop {
     --space: var(--cloud-space);
     --AA: 1px;
     --angle: -45deg;
-    --color-clouds: #def;
+    --color-clouds: var(--cloud-color);
     --offset: calc(25svh - 25svw);
     opacity: var(--cloud-coverage);
     bottom: calc(50% - var(--offset));

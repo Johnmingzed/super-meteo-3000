@@ -135,6 +135,7 @@ function resetLayout() {
     clouds.style.setProperty('display', 'none');
     skyElt.style.setProperty('--opacity', 'var(--high-cloud)');
     rainElt.innerHTML = "";
+    document.documentElement.style.setProperty('--cloud-color', '#def');
 }
 
 // Interrogation de l'API meteo
@@ -387,10 +388,14 @@ function setRain(array) {
         rainElt.appendChild(frame);
         makeItRain(frame, parseFloat(rain + 0.1) * 50);
         const cloudsForRain = {
-            hourly_data[hour].HCDC;
-            hourly_data[hour].MCDC;
-            hourly_data[hour].LCDC;
-        }
+            "hourly_data": {
+                "0H00": {
+                    "HCDC": "50.00",
+                    "MCDC": "90.00",
+                    "LCDC": "50.00"
+                }}};
+        setClouds([cloudsForRain, "00:00"]);
+        document.documentElement.style.setProperty('--cloud-color', '#bbc')
     }
 }
 
