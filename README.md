@@ -6,7 +6,9 @@ To-Do List :
 - ✅ Gestion de la longueur des noms à afficher
 - ✅ Opacité des nuages en fonction de la couverture nuageuse
 - ✅ Thème nocturne
-- Thème pluie
+- ✅ Thème pluie
 - Thème orageux
-- Correction affichage nuages lors des swipes vers le bas
+- ✅ Correction affichage nuages lors des swipes vers le bas
 - Couleur du soleil et du ciel en fonction de l'heure
+- Optimisation des performances (refaire les déplacements avec transform)
+- Changement d'API météo (OpenWeather)
