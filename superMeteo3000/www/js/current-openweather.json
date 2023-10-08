@@ -1,0 +1,46 @@
+{
+    "coord": {
+        "lon": -1.0762,
+        "lat": 44.9778
+    },
+    "weather": [
+        {
+            "id": 802,
+            "main": "Clouds",
+            "description": "partiellement nuageux",
+            "icon": "03d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 27.22,
+        "feels_like": 27.7,
+        "temp_min": 26.03,
+        "temp_max": 27.45,
+        "pressure": 1022,
+        "humidity": 51,
+        "sea_level": 1022,
+        "grnd_level": 1020
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 2.58,
+        "deg": 332,
+        "gust": 3.23
+    },
+    "clouds": {
+        "all": 46
+    },
+    "dt": 1696785429,
+    "sys": {
+        "type": 1,
+        "id": 6450,
+        "country": "FR",
+        "sunrise": 1696745414,
+        "sunset": 1696786405
+    },
+    "timezone": 7200,
+    "id": 3010626,
+    "name": "Lacanau",
+    "cod": 200
+}
